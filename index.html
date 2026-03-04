@@ -315,15 +315,23 @@
     /* ── CARROSSÉIS ── */
     .carousel-wrapper {
       width: 100vw;
-      overflow: hidden;
-      padding: 0;
+      overflow: visible;
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      clip-path: inset(0);
     }
-    .carousel-wrapper.top { top: 0; }
-    .carousel-wrapper.bottom { bottom: 0; }
+    /* Cima: trava topo e lados, sombra pode vazar para baixo */
+    .carousel-wrapper.top {
+      top: 0;
+      padding-bottom: 50px;
+      clip-path: inset(0 0 -60px 0);
+    }
+    /* Baixo: trava rodapé e lados, sombra pode vazar para cima */
+    .carousel-wrapper.bottom {
+      bottom: 0;
+      padding-top: 50px;
+      clip-path: inset(-60px 0 0 0);
+    }
 
     .carousel-track {
       display: flex;
@@ -331,8 +339,9 @@
       width: max-content;
       will-change: transform;
     }
-    .carousel-wrapper.top    .carousel-track { animation: scrollLeft 100s linear infinite; }
-    .carousel-wrapper.bottom .carousel-track { animation: scrollRight 100s linear infinite; }
+    /* Ancora fotos no topo (cima) ou rodapé (baixo) para transform-origin funcionar */
+    .carousel-wrapper.top    .carousel-track { align-items: flex-start; animation: scrollLeft 100s linear infinite; }
+    .carousel-wrapper.bottom .carousel-track { align-items: flex-end;   animation: scrollRight 100s linear infinite; }
 
     @keyframes scrollLeft {
       0%   { transform: translateX(0); }
@@ -343,8 +352,6 @@
       100% { transform: translateX(0); }
     }
 
-    .carousel-wrapper:hover .carousel-track { animation-play-state: paused; }
-
     .c-photo {
       width: clamp(110px, 22vw, 130px);
       height: clamp(110px, 22vw, 130px);
@@ -352,8 +359,13 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(232,135,154,0.2);
-      box-shadow: 0 4px 16px rgba(192,57,90,0.15);
+      position: relative;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
     }
+    /* Cima cresce para baixo, baixo cresce para cima */
+    .carousel-wrapper.top    .c-photo { transform-origin: top center; }
+    .carousel-wrapper.bottom .c-photo { transform-origin: bottom center; }
+
     .c-photo img {
       width: 100%;
       height: 100%;
@@ -362,6 +374,7 @@
       pointer-events: none;
       user-select: none;
       opacity: 0.5;
+      transition: opacity 0.12s ease-out;
     }
 
     /* Contador ocupa tela toda com carrosséis nas bordas */
@@ -693,6 +706,66 @@ function buildCarousel(trackId, photos) {
 
 buildCarousel('row-top',    photosTop);
 buildCarousel('row-bottom', photosBottom);
+
+
+// ── EFEITO DOCK ───────────────────────────────
+const SCALE_MAX = 1.4;
+const SIGMA     = 120;
+
+function gaussian(dist) {
+  return 1 + (SCALE_MAX - 1) * Math.exp(-(dist * dist) / (2 * SIGMA * SIGMA));
+}
+
+function initDock(selector) {
+  const wrapper = document.querySelector(selector);
+  if (!wrapper) return;
+
+  let mouseX = null;
+  let rafId  = null;
+
+  function updateDock() {
+    if (mouseX === null) return;
+    const items = [...wrapper.querySelectorAll('.c-photo')];
+    items.forEach(photo => {
+      const rect   = photo.getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      const t      = gaussian(Math.abs(mouseX - center));
+      const norm   = (t - 1) / (SCALE_MAX - 1);
+
+      photo.style.transform = `scale(${t.toFixed(3)})`;
+      photo.style.zIndex    = Math.round(norm * 10).toString();
+      const img = photo.querySelector('img');
+      if (img) img.style.opacity = (0.5 + norm * 0.5).toFixed(3);
+      photo.style.boxShadow = t > 1.05
+        ? `0 ${Math.round((t-1)*40)}px ${Math.round((t-1)*60)}px rgba(192,57,90,${((t-1)*1.2).toFixed(2)})`
+        : '';
+    });
+    rafId = requestAnimationFrame(updateDock);
+  }
+
+  wrapper.addEventListener('mouseenter', () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(updateDock);
+  });
+
+  wrapper.addEventListener('mousemove', e => { mouseX = e.clientX; });
+
+  wrapper.addEventListener('mouseleave', () => {
+    mouseX = null;
+    cancelAnimationFrame(rafId);
+    rafId = null;
+    wrapper.querySelectorAll('.c-photo').forEach(p => {
+      p.style.transform = 'scale(1)';
+      p.style.zIndex    = '';
+      p.style.boxShadow = '';
+      const img = p.querySelector('img');
+      if (img) img.style.opacity = '0.5';
+    });
+  });
+}
+
+initDock('.carousel-wrapper.top');
+initDock('.carousel-wrapper.bottom');
 
 init();
 </script>
