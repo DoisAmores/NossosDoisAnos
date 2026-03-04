@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<script>
+ 	 sessionStorage.clear();
+ 	 localStorage.clear();
+	</script>
+
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>29.03.2026 — 2 Anos 🌹</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=EB+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --rose-mid:   #c0395a;
+      --rose-light: #e8879a;
+      --rose-pale:  #f5c6d0;
+      --bg:         #110208;
+      --card-bg:    rgba(255,255,255,0.045);
+      --card-bdr:   rgba(232,135,154,0.22);
+      --text:       #fdf0f3;
+      --muted:      rgba(253,240,243,0.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 25% 0%,   #3b0a1e 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 100%,  #280514 0%, transparent 55%),
+        #110208;
+      font-family: 'EB Garamond', serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    canvas#bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── WRAP ── */
+    .wrap {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding: 3.5rem 1.5rem;
+      text-align: center;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    /* ── ORNAMENTO ── */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: fadeDown 1.2s ease both;
+    }
+    .orn-line { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--rose-light)); }
+    .orn-line.r { background: linear-gradient(90deg, var(--rose-light), transparent); }
+    .orn-rose { font-size: 1.5rem; animation: sway 4s ease-in-out infinite; }
+    @keyframes sway {
+      0%,100% { transform: rotate(-8deg) scale(1);   }
+      50%      { transform: rotate( 8deg) scale(1.1); }
+    }
+
+    /* ── BADGE ── */
+    .badge {
+      font-size: 0.68rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--rose-light);
+      border: 1px solid var(--card-bdr);
+      border-radius: 99px;
+      padding: 0.35rem 1.2rem;
+      backdrop-filter: blur(8px);
+      animation: fadeDown 1.4s ease both 0.1s;
+    }
+
+    /* ── TÍTULO ── */
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 6.5vw, 3.4rem);
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fce7f3 0%, var(--rose-light) 45%, var(--rose-mid) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeDown 1.4s ease both 0.2s;
+    }
+
+    .sub {
+      font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.07em;
+      animation: fadeDown 1.4s ease both 0.3s;
+    }
+
+    /* ── GRID CONTADOR ── */
+    .grid {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.85rem;
+      width: 100%;
+      animation: fadeUp 1.6s ease both 0.45s;
+    }
+    /* When a wrap collapses to 0 width, its gap persists in flex.
+       We override it by making the hidden element use negative margin */
+    @media (max-width: 440px) { .grid { gap: 0.5rem; } }
+
+    .card-wrap {
+      overflow: hidden;
+      transition: width .7s ease, opacity .7s ease, margin .7s ease;
+      opacity: 1;
+      flex-shrink: 0;
+      width: 135px;
+    }
+    .card-wrap.hide {
+      width: 0 !important;
+      opacity: 0;
+      margin: -0.425rem !important; /* cancels half the gap on each side */
+      pointer-events: none;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-bdr);
+      border-radius: 16px;
+      padding: 1.5rem 0.5rem 1.1rem;
+      backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+      width: 130px;
+      transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(232,135,154,.5);
+      box-shadow: 0 12px 40px rgba(192,57,90,.18);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--rose-light), transparent);
+    }
+
+    .num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      display: block;
+      text-shadow: 0 0 20px rgba(224,135,154,.55), 0 0 50px rgba(192,57,90,.25);
+      min-height: 1.15em;
+    }
+    .num.flip { animation: flipIn .38s cubic-bezier(.4,0,.2,1); }
+    @keyframes flipIn {
+      0%   { transform: rotateX(90deg) scale(.9); opacity: 0; }
+      100% { transform: rotateX(0deg)  scale(1);  opacity: 1; }
+    }
+
+    .lbl {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245,198,208,.6);
+      margin-top: .5rem;
+      font-weight: 300;
+    }
+
+    /* ── DATA ── */
+    .date-tag {
+      font-size: .75rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(232,135,154,.35);
+      animation: fadeUp 1.6s ease both .65s;
+    }
+
+    /* ── CELEBRAÇÃO ── */
+    .celebrate { display: none; flex-direction: column; align-items: center; gap: 1rem; }
+    .celebrate.on { display: flex; }
+    .celebrate-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 8vw, 4rem);
+      font-style: italic;
+      background: linear-gradient(135deg, #fce7f3, var(--rose-light), var(--rose-mid));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glow 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { filter: brightness(1);    transform: scale(1);    }
+      to   { filter: brightness(1.35); transform: scale(1.04); }
+    }
+
+    /* ── LOGIN ── */
+    #screen-login {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      animation: fadeDown 1.4s ease both;
+      width: 100%;
+    }
+
+    .login-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-bdr);
+      border-radius: 20px;
+      padding: 2.5rem 2.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 380px;
+      backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--rose-light), transparent);
+    }
+
+    .login-box input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-bdr);
+      border-radius: 10px;
+      padding: 0.85rem 1.1rem;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: 'EB Garamond', serif;
+      outline: none;
+      transition: border 0.3s, box-shadow 0.3s;
+      letter-spacing: 0.05em;
+    }
+    .login-box input::placeholder { color: rgba(245,198,208,0.35); font-style: italic; }
+    .login-box input:focus {
+      border-color: rgba(232,135,154,0.55);
+      box-shadow: 0 0 0 3px rgba(192,57,90,0.12);
+    }
+
+    .btn-login {
+      margin-top: 0.5rem;
+      background: linear-gradient(135deg, #7b1a35, var(--rose-mid));
+      border: none;
+      border-radius: 10px;
+      padding: 0.9rem;
+      color: #fff;
+      font-size: 0.75rem;
+      font-family: 'EB Garamond', serif;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+    .btn-login:hover {
+      opacity: 0.88;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(192,57,90,0.35);
+    }
+    .btn-login:active { transform: translateY(0); }
+
+    .login-error {
+      color: #ff8fa3;
+      font-size: 0.82rem;
+      text-align: center;
+      min-height: 1.1em;
+      font-style: italic;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── SITE PLACEHOLDER ── */
+    #screen-site {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      animation: fadeUp 1.5s ease both;
+      text-align: center;
+    }
+
+    /* ── TRANSIÇÕES ── */
+    .fadeout { animation: fadeOut 0.8s ease forwards; }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0);     }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- ── TELA 1: CONTADOR ── -->
+<div class="wrap" id="screen-counter" style="display:none;">
+
+  <div class="ornament">
+    <div class="orn-line"></div>
+    <span class="orn-rose">🌹</span>
+    <div class="orn-line r"></div>
+  </div>
+
+  <div class="badge">✦ &nbsp;nossos 2 anos&nbsp; ✦</div>
+
+  <h1 class="title">faltam apenas…</h1>
+
+  <div class="grid" id="grid">
+    <div class="card-wrap" id="card-days"><div class="card"><span class="num" id="days">--</span><span class="lbl">dias</span></div></div>
+    <div class="card-wrap" id="card-hours"><div class="card"><span class="num" id="hours">--</span><span class="lbl">horas</span></div></div>
+    <div class="card-wrap" id="card-minutes"><div class="card"><span class="num" id="minutes">--</span><span class="lbl">minutos</span></div></div>
+    <div class="card-wrap"><div class="card"><span class="num" id="seconds">--</span><span class="lbl">segundos</span></div></div>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <div class="celebrate-title">🌹 Dois anos da gente! 🌹</div>
+    <p style="font-style:italic;color:var(--muted);font-size:1.15rem;">Um momento especial te espera…</p>
+  </div>
+
+  <p class="date-tag">29 · 03 · 2026</p>
+
+</div>
+
+<!-- ── TELA 2: LOGIN ── -->
+<div class="wrap" id="screen-login" style="display:none;">
+
+  <div class="ornament">
+    <div class="orn-line"></div>
+    <span class="orn-rose">🌹</span>
+    <div class="orn-line r"></div>
+  </div>
+
+  <h1 class="title">só para nós dois</h1>
+
+  <div class="login-box">
+    <input type="text"     id="input-user" placeholder="usuário"  autocomplete="off"/>
+    <input type="password" id="input-pass" placeholder="senha"    autocomplete="off"/>
+    <button class="btn-login" onclick="handleLogin()">entrar &nbsp;✦</button>
+    <p class="login-error" id="login-error"></p>
+  </div>
+
+  <p class="date-tag">29 · 03 · 2026</p>
+
+</div>
+
+
+<script>
+// ── CONFIGURAÇÕES ────────────────────────────
+const TARGET = new Date("2026-03-29T00:00:00");
+
+// IMPORTANTE: Antes de publicar, substitua pelo hash SHA-256.
+// Gere em: https://emn178.github.io/online-tools/sha256.html
+const CREDENTIALS = [
+  { user: 'admin', passHash: btoa('admin') }, // ← usuário 1
+  { user: 'admin', passHash: btoa('admin') }, // ← usuário 2
+];
+
+// ── INICIALIZAÇÃO ────────────────────────────
+function init() {
+  const agora    = new Date();
+  const jaPassou = agora >= TARGET;
+  const jaLogado = sessionStorage.getItem('autenticado') === 'true';
+
+  // Uma vez que a data passou, grava em localStorage para nunca mais mostrar o contador
+  if (jaPassou) localStorage.setItem('contadorEncerrado', 'true');
+  const contadorEncerrado = localStorage.getItem('contadorEncerrado') === 'true';
+
+  if (jaLogado) {
+  } else if (contadorEncerrado) {
+    mostrar('screen-login');
+  } else {
+    mostrar('screen-counter');
+    iniciarContador();
+  }
+}
+
+// ── CONTADOR ────────────────────────────────
+const elDays    = document.getElementById('days');
+const elHours   = document.getElementById('hours');
+const elMinutes = document.getElementById('minutes');
+const elSeconds = document.getElementById('seconds');
+const celebrate = document.getElementById('celebrate');
+const grid      = document.getElementById('grid');
+const prev      = {};
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function flip(el, val) {
+  if (prev[el.id] === val) return;
+  prev[el.id] = val;
+  el.textContent = val;
+  el.classList.remove('flip');
+  void el.offsetWidth;
+  el.classList.add('flip');
+}
+
+function iniciarContador() {
+  let revelado = false;
+
+  function tick() {
+    const diff = TARGET - new Date();
+
+    if (diff <= 0 && !revelado) {
+      revelado = true;
+      localStorage.setItem('contadorEncerrado', 'true');
+      const counter = document.getElementById('screen-counter');
+      counter.classList.add('fadeout');
+      setTimeout(() => {
+        counter.style.display = 'none';
+        mostrar('screen-login');
+      }, 900);
+      return;
+    }
+
+    if (diff > 0) {
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000)  / 60000);
+      const s = Math.floor((diff % 60000)    / 1000);
+
+      flip(elDays,    pad(d));
+      flip(elHours,   pad(h));
+      flip(elMinutes, pad(m));
+      flip(elSeconds, pad(s));
+
+      // Remove cards suavemente quando chegam a zero
+      const cardDays    = document.getElementById('card-days');
+      const cardHours   = document.getElementById('card-hours');
+      const cardMinutes = document.getElementById('card-minutes');
+
+      if (d === 0 && cardDays    && !cardDays.classList.contains('hide'))    cardDays.classList.add('hide');
+      if (h === 0 && d === 0 && cardHours   && !cardHours.classList.contains('hide'))   cardHours.classList.add('hide');
+      if (m === 0 && h === 0 && d === 0 && cardMinutes && !cardMinutes.classList.contains('hide')) cardMinutes.classList.add('hide');
+    }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+// ── LOGIN ────────────────────────────────────
+function handleLogin() {
+  const user  = document.getElementById('input-user').value.trim();
+  const pass  = document.getElementById('input-pass').value;
+  const erro  = document.getElementById('login-error');
+  const hash  = btoa(pass);
+  const valido = CREDENTIALS.some(c => c.user === user && c.passHash === hash);
+
+  if (valido) {
+    sessionStorage.setItem('autenticado', 'true');
+    const login = document.getElementById('screen-login');
+    login.classList.add('fadeout');
+    setTimeout(() => { window.location.href = 'site.html'; }, 800);
+  } else {
+    erro.textContent = 'usuário ou senha incorretos.';
+    setTimeout(() => erro.textContent = '', 3000);
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+function mostrar(id) { document.getElementById(id).style.display = 'flex'; }
+
+// ── PÉTALAS ──────────────────────────────────
+const canvas = document.getElementById('bg');
+const ctx    = canvas.getContext('2d');
+let petals   = [];
+
+const COLORS = [
+  'rgba(192,57,90,',
+  'rgba(232,135,154,',
+  'rgba(245,198,208,',
+  'rgba(123,30,58,',
+];
+
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+
+function mkPetal() {
+  return {
+    x: Math.random() * canvas.width, y: -20 - Math.random() * 60,
+    rx: 5 + Math.random() * 8, ry: 3 + Math.random() * 5,
+    angle: Math.random() * Math.PI * 2, spin: (Math.random() - .5) * .04,
+    vx: (Math.random() - .5) * .6, vy: .45 + Math.random() * .85,
+    alpha: .15 + Math.random() * .45,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    wave: Math.random() * Math.PI * 2,
+  };
+}
+
+function initPetals() {
+  petals = [];
+  const n = Math.min(65, Math.floor(canvas.width / 16));
+  for (let i = 0; i < n; i++) {
+    const p = mkPetal();
+    p.y = Math.random() * canvas.height;
+    petals.push(p);
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  petals.forEach(p => {
+    p.wave += .012; p.x += p.vx + Math.sin(p.wave) * .4;
+    p.y += p.vy; p.angle += p.spin;
+    if (p.y > canvas.height + 30) Object.assign(p, mkPetal());
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.angle);
+    ctx.scale(1, p.ry / p.rx);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.rx, p.rx * .65, 0, 0, Math.PI * 2);
+    ctx.fillStyle = p.color + p.alpha + ')';
+    ctx.fill();
+    ctx.restore();
+  });
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', () => { resize(); initPetals(); });
+resize(); initPetals(); draw();
+
+init();
+</script>
+</body>
+</html>
