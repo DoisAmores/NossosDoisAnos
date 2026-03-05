@@ -720,16 +720,16 @@ function initDock(selector) {
   const wrapper = document.querySelector(selector);
   if (!wrapper) return;
 
-  let mouseX = null;
-  let rafId  = null;
+  let mouseX  = null;
+  let lockedX = null;
+  let rafId   = null;
 
-  function updateDock() {
-    if (mouseX === null) return;
+  function applyDock(x) {
     const items = [...wrapper.querySelectorAll('.c-photo')];
     items.forEach(photo => {
       const rect   = photo.getBoundingClientRect();
       const center = rect.left + rect.width / 2;
-      const t      = gaussian(Math.abs(mouseX - center));
+      const t      = gaussian(Math.abs(x - center));
       const norm   = (t - 1) / (SCALE_MAX - 1);
 
       photo.style.transform = `scale(${t.toFixed(3)})`;
@@ -740,20 +740,9 @@ function initDock(selector) {
         ? `0 ${Math.round((t-1)*40)}px ${Math.round((t-1)*60)}px rgba(192,57,90,${((t-1)*1.2).toFixed(2)})`
         : '';
     });
-    rafId = requestAnimationFrame(updateDock);
   }
 
-  wrapper.addEventListener('mouseenter', () => {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(updateDock);
-  });
-
-  wrapper.addEventListener('mousemove', e => { mouseX = e.clientX; });
-
-  wrapper.addEventListener('mouseleave', () => {
-    mouseX = null;
-    cancelAnimationFrame(rafId);
-    rafId = null;
+  function resetDock() {
     wrapper.querySelectorAll('.c-photo').forEach(p => {
       p.style.transform = 'scale(1)';
       p.style.zIndex    = '';
@@ -761,6 +750,72 @@ function initDock(selector) {
       const img = p.querySelector('img');
       if (img) img.style.opacity = '0.5';
     });
+  }
+
+  function updateDock() {
+    if (lockedX !== null) {
+      const locked = wrapper.querySelector('.c-photo.locked');
+      if (locked) {
+        const rect = locked.getBoundingClientRect();
+        applyDock(rect.left + rect.width / 2);
+      }
+    } else if (mouseX !== null) {
+      applyDock(mouseX);
+    }
+    rafId = requestAnimationFrame(updateDock);
+  }
+
+  wrapper.addEventListener('mouseenter', () => {
+    if (!lockedX) {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateDock);
+    }
+  });
+
+  wrapper.addEventListener('mousemove', e => {
+    if (!lockedX) mouseX = e.clientX;
+  });
+
+  wrapper.addEventListener('mouseleave', () => {
+    if (!lockedX) {
+      mouseX = null;
+      cancelAnimationFrame(rafId);
+      rafId = null;
+      resetDock();
+    }
+  });
+
+  // Clique: trava/destrava na foto
+  wrapper.addEventListener('click', e => {
+    const photo = e.target.closest('.c-photo');
+
+    if (lockedX !== null) {
+      // Já travado → destrava e volta ao mouse
+      lockedX = null;
+      wrapper.querySelectorAll('.c-photo').forEach(p => p.classList.remove('locked'));
+      mouseX = e.clientX;
+      return;
+    }
+
+    if (photo) {
+      photo.classList.add('locked');
+      const rect = photo.getBoundingClientRect();
+      lockedX = rect.left + rect.width / 2;
+      mouseX  = null;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateDock);
+    }
+  });
+
+  // Clique fora do carrossel também destrava
+  document.addEventListener('click', e => {
+    if (!wrapper.contains(e.target) && lockedX !== null) {
+      lockedX = null;
+      wrapper.querySelectorAll('.c-photo').forEach(p => p.classList.remove('locked'));
+      cancelAnimationFrame(rafId);
+      rafId = null;
+      resetDock();
+    }
   });
 }
 
