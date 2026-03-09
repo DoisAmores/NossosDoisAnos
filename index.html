@@ -359,14 +359,7 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(232,135,154,0.2);
-      position: relative;
-      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
-      will-change: transform;
     }
-    /* Cima cresce para baixo, baixo cresce para cima */
-    .carousel-wrapper.top    .c-photo { transform-origin: top center; }
-    .carousel-wrapper.bottom .c-photo { transform-origin: bottom center; }
-
     .c-photo img {
       width: 100%;
       height: 100%;
@@ -375,7 +368,7 @@
       pointer-events: none;
       user-select: none;
       opacity: 0.5;
-      transition: opacity 0.12s ease-out;
+      transition: opacity 0.4s ease;
     }
 
     /* Contador ocupa tela toda com carrosséis nas bordas */
@@ -709,116 +702,39 @@ buildCarousel('row-top',    photosTop);
 buildCarousel('row-bottom', photosBottom);
 
 
-// ── EFEITO DOCK ───────────────────────────────
-const SCALE_MAX = 1.4;
-const SIGMA     = 120;
-
-function gaussian(dist) {
-  return 1 + (SCALE_MAX - 1) * Math.exp(-(dist * dist) / (2 * SIGMA * SIGMA));
-}
-
-function initDock(selector) {
+// ── PROXIMIDADE: OPACIDADE ───────────────────
+function initProximity(selector) {
   const wrapper = document.querySelector(selector);
   if (!wrapper) return;
+  const SIGMA = 150; // raio de influência em px
 
-  let mouseX   = null;
-  let lockedX  = null;
-  let rafId    = null;
-  let active   = false; // rAF só corre quando necessário
-  const W      = window.innerWidth;
+  function gaussian(dist) {
+    return Math.exp(-(dist * dist) / (2 * SIGMA * SIGMA));
+  }
 
-  function applyDock(x) {
-    const items = wrapper.querySelectorAll('.c-photo');
-    items.forEach(photo => {
-      const rect = photo.getBoundingClientRect();
-      // Ignora fotos fora da viewport — não vale calcular
-      if (rect.right < 0 || rect.left > W) return;
+  function applyOpacity(mouseX) {
+    wrapper.querySelectorAll('.c-photo').forEach(photo => {
+      const rect   = photo.getBoundingClientRect();
+      if (rect.right < 0 || rect.left > window.innerWidth) return;
       const center = rect.left + rect.width / 2;
-      const t      = gaussian(Math.abs(x - center));
-      const norm   = (t - 1) / (SCALE_MAX - 1);
-
-      photo.style.transform = `scale(${t.toFixed(3)})`;
-      photo.style.zIndex    = norm > 0.05 ? Math.round(norm * 10).toString() : '';
-      const img = photo.querySelector('img');
+      const norm   = gaussian(Math.abs(mouseX - center)); // 0 → 1
+      const img    = photo.querySelector('img');
       if (img) img.style.opacity = (0.5 + norm * 0.5).toFixed(3);
-      photo.style.boxShadow = t > 1.05
-        ? `0 ${Math.round((t-1)*40)}px ${Math.round((t-1)*60)}px rgba(192,57,90,${((t-1)*1.2).toFixed(2)})`
-        : '';
     });
   }
 
-  function resetDock() {
-    wrapper.querySelectorAll('.c-photo').forEach(p => {
-      p.style.transform = 'scale(1)';
-      p.style.zIndex    = '';
-      p.style.boxShadow = '';
-      const img = p.querySelector('img');
-      if (img) img.style.opacity = '0.5';
+  function resetOpacity() {
+    wrapper.querySelectorAll('.c-photo img').forEach(img => {
+      img.style.opacity = '0.5';
     });
   }
 
-  function loop() {
-    if (!active) return; // para o loop ao sair
-    if (lockedX !== null) {
-      const locked = wrapper.querySelector('.c-photo.locked');
-      if (locked) {
-        const rect = locked.getBoundingClientRect();
-        applyDock(rect.left + rect.width / 2);
-      }
-    } else if (mouseX !== null) {
-      applyDock(mouseX);
-    }
-    rafId = requestAnimationFrame(loop);
-  }
-
-  function startLoop() {
-    if (active) return;
-    active = true;
-    rafId  = requestAnimationFrame(loop);
-  }
-
-  function stopLoop() {
-    active = false;
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-  }
-
-  wrapper.addEventListener('mouseenter', () => { if (!lockedX) startLoop(); });
-  wrapper.addEventListener('mousemove',  e  => { if (!lockedX) mouseX = e.clientX; });
-  wrapper.addEventListener('mouseleave', ()  => {
-    if (!lockedX) { mouseX = null; stopLoop(); resetDock(); }
-  });
-
-  // Clique: trava/destrava
-  wrapper.addEventListener('click', e => {
-    const photo = e.target.closest('.c-photo');
-    if (lockedX !== null) {
-      lockedX = null;
-      wrapper.querySelectorAll('.c-photo').forEach(p => p.classList.remove('locked'));
-      mouseX = e.clientX;
-      return;
-    }
-    if (photo) {
-      photo.classList.add('locked');
-      const rect = photo.getBoundingClientRect();
-      lockedX = rect.left + rect.width / 2;
-      mouseX  = null;
-      startLoop();
-    }
-  });
-
-  // Clique fora destrava
-  document.addEventListener('click', e => {
-    if (!wrapper.contains(e.target) && lockedX !== null) {
-      lockedX = null;
-      wrapper.querySelectorAll('.c-photo').forEach(p => p.classList.remove('locked'));
-      stopLoop();
-      resetDock();
-    }
-  });
+  wrapper.addEventListener('mousemove', e => applyOpacity(e.clientX));
+  wrapper.addEventListener('mouseleave', resetOpacity);
 }
 
-initDock('.carousel-wrapper.top');
-initDock('.carousel-wrapper.bottom');
+initProximity('.carousel-wrapper.top');
+initProximity('.carousel-wrapper.bottom');
 
 init();
 </script>
