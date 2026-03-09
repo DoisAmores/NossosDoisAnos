@@ -688,6 +688,8 @@ function buildCarousel(trackId, photos) {
     img.src = src;
     img.alt = '';
     img.draggable = false;
+    img.loading = 'lazy';
+    img.decoding = 'async';
     wrap.appendChild(img);
     return wrap;
   }
