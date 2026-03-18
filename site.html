@@ -1,557 +1,260 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-	<script>
- 	 sessionStorage.clear();
- 	 localStorage.clear();
-	</script>
-
-
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>29.03.2026 — 2 Anos 🌹</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=EB+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <title>Menu Espiral — Versão 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=EB+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --rose-mid:   #c0395a;
-      --rose-light: #e8879a;
-      --rose-pale:  #f5c6d0;
-      --bg:         #110208;
-      --card-bg:    rgba(255,255,255,0.045);
-      --card-bdr:   rgba(232,135,154,0.22);
-      --text:       #fdf0f3;
-      --muted:      rgba(253,240,243,0.45);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(ellipse at 25% 0%,   #3b0a1e 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 100%,  #280514 0%, transparent 55%),
-        #110208;
-      font-family: 'EB Garamond', serif;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    canvas#bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* ── WRAP ── */
-    .wrap {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      padding: 3.5rem 1.5rem;
-      text-align: center;
-      max-width: 620px;
-      width: 100%;
-    }
-
-    /* ── ORNAMENTO ── */
-    .ornament {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      animation: fadeDown 1.2s ease both;
-    }
-    .orn-line { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--rose-light)); }
-    .orn-line.r { background: linear-gradient(90deg, var(--rose-light), transparent); }
-    .orn-rose { font-size: 1.5rem; animation: sway 4s ease-in-out infinite; }
-    @keyframes sway {
-      0%,100% { transform: rotate(-8deg) scale(1);   }
-      50%      { transform: rotate( 8deg) scale(1.1); }
-    }
-
-    /* ── BADGE ── */
-    .badge {
-      font-size: 0.68rem;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: var(--rose-light);
-      border: 1px solid var(--card-bdr);
-      border-radius: 99px;
-      padding: 0.35rem 1.2rem;
-      backdrop-filter: blur(8px);
-      animation: fadeDown 1.4s ease both 0.1s;
-    }
-
-    /* ── TÍTULO ── */
-    .title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.9rem, 6.5vw, 3.4rem);
-      font-style: italic;
-      font-weight: 400;
-      line-height: 1.15;
-      background: linear-gradient(135deg, #fce7f3 0%, var(--rose-light) 45%, var(--rose-mid) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: fadeDown 1.4s ease both 0.2s;
-    }
-
-    .sub {
-      font-size: clamp(0.9rem, 2.2vw, 1.05rem);
-      font-style: italic;
-      color: var(--muted);
-      letter-spacing: 0.07em;
-      animation: fadeDown 1.4s ease both 0.3s;
-    }
-
-    /* ── GRID CONTADOR ── */
-    .grid {
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: center;
-      align-items: center;
-      gap: 0.85rem;
-      width: 100%;
-      animation: fadeUp 1.6s ease both 0.45s;
-    }
-    /* When a wrap collapses to 0 width, its gap persists in flex.
-       We override it by making the hidden element use negative margin */
-    @media (max-width: 440px) { .grid { gap: 0.5rem; } }
-
-    .card-wrap {
-      overflow: hidden;
-      transition: width .7s ease, opacity .7s ease, margin .7s ease;
-      opacity: 1;
-      flex-shrink: 0;
-      width: 135px;
-    }
-    .card-wrap.hide {
-      width: 0 !important;
-      opacity: 0;
-      margin: -0.425rem !important; /* cancels half the gap on each side */
-      pointer-events: none;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-bdr);
-      border-radius: 16px;
-      padding: 1.5rem 0.5rem 1.1rem;
-      backdrop-filter: blur(14px);
-      position: relative;
-      overflow: hidden;
-      width: 130px;
-      transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(232,135,154,.5);
-      box-shadow: 0 12px 40px rgba(192,57,90,.18);
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--rose-light), transparent);
-    }
-
-    .num {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.4rem, 6vw, 3.4rem);
-      font-weight: 700;
-      line-height: 1;
-      color: #fff;
-      display: block;
-      text-shadow: 0 0 20px rgba(224,135,154,.55), 0 0 50px rgba(192,57,90,.25);
-      min-height: 1.15em;
-    }
-    .num.flip { animation: flipIn .38s cubic-bezier(.4,0,.2,1); }
-    @keyframes flipIn {
-      0%   { transform: rotateX(90deg) scale(.9); opacity: 0; }
-      100% { transform: rotateX(0deg)  scale(1);  opacity: 1; }
-    }
-
-    .lbl {
-      display: block;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(245,198,208,.6);
-      margin-top: .5rem;
-      font-weight: 300;
-    }
-
-    /* ── DATA ── */
-    .date-tag {
-      font-size: .75rem;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      color: rgba(232,135,154,.35);
-      animation: fadeUp 1.6s ease both .65s;
-    }
-
-    /* ── CELEBRAÇÃO ── */
-    .celebrate { display: none; flex-direction: column; align-items: center; gap: 1rem; }
-    .celebrate.on { display: flex; }
-    .celebrate-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 8vw, 4rem);
-      font-style: italic;
-      background: linear-gradient(135deg, #fce7f3, var(--rose-light), var(--rose-mid));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: glow 1.5s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from { filter: brightness(1);    transform: scale(1);    }
-      to   { filter: brightness(1.35); transform: scale(1.04); }
-    }
-
-    /* ── LOGIN ── */
-    #screen-login {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      animation: fadeDown 1.4s ease both;
-      width: 100%;
-    }
-
-    .login-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-bdr);
-      border-radius: 20px;
-      padding: 2.5rem 2.8rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-      max-width: 380px;
-      backdrop-filter: blur(14px);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .login-box::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--rose-light), transparent);
-    }
-
-    .login-box input {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--card-bdr);
-      border-radius: 10px;
-      padding: 0.85rem 1.1rem;
-      color: var(--text);
-      font-size: 1rem;
-      font-family: 'EB Garamond', serif;
-      outline: none;
-      transition: border 0.3s, box-shadow 0.3s;
-      letter-spacing: 0.05em;
-    }
-    .login-box input::placeholder { color: rgba(245,198,208,0.35); font-style: italic; }
-    .login-box input:focus {
-      border-color: rgba(232,135,154,0.55);
-      box-shadow: 0 0 0 3px rgba(192,57,90,0.12);
-    }
-
-    .btn-login {
-      margin-top: 0.5rem;
-      background: linear-gradient(135deg, #7b1a35, var(--rose-mid));
-      border: none;
-      border-radius: 10px;
-      padding: 0.9rem;
-      color: #fff;
-      font-size: 0.75rem;
-      font-family: 'EB Garamond', serif;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: opacity 0.3s, transform 0.2s, box-shadow 0.3s;
-    }
-    .btn-login:hover {
-      opacity: 0.88;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(192,57,90,0.35);
-    }
-    .btn-login:active { transform: translateY(0); }
-
-    .login-error {
-      color: #ff8fa3;
-      font-size: 0.82rem;
-      text-align: center;
-      min-height: 1.1em;
-      font-style: italic;
-      letter-spacing: 0.05em;
-    }
-
-    /* ── SITE PLACEHOLDER ── */
-    #screen-site {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-      animation: fadeUp 1.5s ease both;
-      text-align: center;
-    }
-
-    /* ── TRANSIÇÕES ── */
-    .fadeout { animation: fadeOut 0.8s ease forwards; }
-
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-18px); }
-      to   { opacity: 1; transform: translateY(0);     }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0);    }
-    }
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to   { opacity: 0; }
-    }
+    :root{--rose-mid:#c0395a;--rose-light:#e8879a;--muted:rgba(253,240,243,0.45);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{min-height:100vh;background:radial-gradient(ellipse at 40% 40%,#180028 0%,#060010 65%);font-family:'EB Garamond',serif;color:#fdf0f3;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+    canvas.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    .scene{position:relative;z-index:10;width:min(92vw,580px);height:min(92vw,580px);display:flex;align-items:center;justify-content:center;}
+    canvas.main{position:absolute;inset:0;z-index:5;}
+    .center{position:absolute;text-align:center;z-index:20;display:flex;flex-direction:column;align-items:center;gap:0.5rem;cursor:pointer;user-select:none;}
+    .center h1{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.5rem,4.5vw,2.4rem);background:linear-gradient(135deg,#fce7f3,var(--rose-light),var(--rose-mid));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+    .hint{font-size:0.7rem;color:var(--muted);letter-spacing:0.2em;transition:opacity 0.5s;}
+    .hint.gone{opacity:0;pointer-events:none;}
+    .pulse-ring{position:absolute;width:80px;height:80px;border-radius:50%;border:2px solid rgba(232,135,154,0.8);pointer-events:none;opacity:0;}
+    .pulse-ring.go{animation:pulseOut 0.8s ease forwards;}
+    @keyframes pulseOut{0%{transform:scale(1);opacity:0.8;}100%{transform:scale(6);opacity:0;}}
+    .star-label{position:absolute;transform:translate(-50%,-50%);font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(232,135,154,0);white-space:nowrap;pointer-events:none;z-index:21;transition:color 0.5s,opacity 0.5s;opacity:0;}
+    .star-label.show{color:rgba(232,135,154,0.45);pointer-events:auto;cursor:pointer;opacity:1;}
+    .star-label.show:hover{color:var(--rose-light);}
   </style>
 </head>
 <body>
-
-<canvas id="bg"></canvas>
-
-<!-- ── TELA 1: CONTADOR ── -->
-<div class="wrap" id="screen-counter" style="display:none;">
-
-  <div class="ornament">
-    <div class="orn-line"></div>
-    <span class="orn-rose">🌹</span>
-    <div class="orn-line r"></div>
+<canvas class="bg" id="bg"></canvas>
+<div class="scene" id="scene">
+  <canvas class="main" id="main"></canvas>
+  <div class="pulse-ring" id="pulse"></div>
+  <div class="center" id="center">
+    <h1>dois anos,<br/>Larissa ♡</h1>
+    <p class="hint" id="hint">toque para explorar ✦</p>
   </div>
-
-  <div class="badge">✦ &nbsp;nossos 2 anos&nbsp; ✦</div>
-
-  <h1 class="title">faltam apenas…</h1>
-
-  <div class="grid" id="grid">
-    <div class="card-wrap" id="card-days"><div class="card"><span class="num" id="days">--</span><span class="lbl">dias</span></div></div>
-    <div class="card-wrap" id="card-hours"><div class="card"><span class="num" id="hours">--</span><span class="lbl">horas</span></div></div>
-    <div class="card-wrap" id="card-minutes"><div class="card"><span class="num" id="minutes">--</span><span class="lbl">minutos</span></div></div>
-    <div class="card-wrap"><div class="card"><span class="num" id="seconds">--</span><span class="lbl">segundos</span></div></div>
-  </div>
-
-  <div class="celebrate" id="celebrate">
-    <div class="celebrate-title">🌹 Dois anos da gente! 🌹</div>
-    <p style="font-style:italic;color:var(--muted);font-size:1.15rem;">Um momento especial te espera…</p>
-  </div>
-
-  <p class="date-tag">29 · 03 · 2026</p>
-
 </div>
-
-<!-- ── TELA 2: LOGIN ── -->
-<div class="wrap" id="screen-login" style="display:none;">
-
-  <div class="ornament">
-    <div class="orn-line"></div>
-    <span class="orn-rose">🌹</span>
-    <div class="orn-line r"></div>
-  </div>
-
-  <h1 class="title">só para nós dois</h1>
-
-  <div class="login-box">
-    <input type="text"     id="input-user" placeholder="usuário"  autocomplete="off"/>
-    <input type="password" id="input-pass" placeholder="senha"    autocomplete="off"/>
-    <button class="btn-login" onclick="handleLogin()">entrar &nbsp;✦</button>
-    <p class="login-error" id="login-error"></p>
-  </div>
-
-  <p class="date-tag">29 · 03 · 2026</p>
-
-</div>
-
-
 <script>
-// ── CONFIGURAÇÕES ────────────────────────────
-const TARGET = new Date("2026-03-29T00:00:00");
-
-// IMPORTANTE: Antes de publicar, substitua pelo hash SHA-256.
-// Gere em: https://emn178.github.io/online-tools/sha256.html
-const CREDENTIALS = [
-  { user: 'admin', passHash: btoa('admin') }, // ← usuário 1
-  { user: 'admin', passHash: btoa('admin') }, // ← usuário 2
+const items=[
+  {label:'álbum',          href:'album.html'},
+  {label:'linha do tempo', href:'linha-do-tempo.html'},
+  {label:'carta',          href:'carta.html'},
+  {label:'galeria',        href:'galeria.html'},
+  {label:'segredo',        href:'segredo.html'},
 ];
 
-// ── INICIALIZAÇÃO ────────────────────────────
-function init() {
-  const agora    = new Date();
-  const jaPassou = agora >= TARGET;
-  const jaLogado = sessionStorage.getItem('autenticado') === 'true';
+// ── BG ───────────────────────────────────────────────────────────────
+const bgCv=document.getElementById('bg'),bgCtx=bgCv.getContext('2d');
+let bgS=[];
+function resizeBg(){bgCv.width=innerWidth;bgCv.height=innerHeight;}
+function mkBg(){return{x:Math.random()*bgCv.width,y:Math.random()*bgCv.height,r:Math.random()*1.1+0.1,a:Math.random()*0.4+0.05,phase:Math.random()*Math.PI*2,speed:Math.random()*0.003+0.001};}
+function initBg(){bgS=Array.from({length:220},mkBg);}
+function drawBg(){bgCtx.clearRect(0,0,bgCv.width,bgCv.height);bgS.forEach(s=>{s.phase+=s.speed;const a=s.a*(0.5+0.5*Math.sin(s.phase));bgCtx.beginPath();bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);bgCtx.fillStyle=`rgba(255,215,235,${a})`;bgCtx.fill();});requestAnimationFrame(drawBg);}
+window.addEventListener('resize',()=>{resizeBg();initBg();setup();});
+resizeBg();initBg();drawBg();
 
-  // Uma vez que a data passou, grava em localStorage para nunca mais mostrar o contador
-  if (jaPassou) localStorage.setItem('contadorEncerrado', 'true');
-  const contadorEncerrado = localStorage.getItem('contadorEncerrado') === 'true';
+// ── MAIN ─────────────────────────────────────────────────────────────
+const scene=document.getElementById('scene');
+const cv=document.getElementById('main');
+const ctx=cv.getContext('2d');
+const N=items.length;
 
-  if (jaLogado) {
-  } else if (contadorEncerrado) {
-    mostrar('screen-login');
-  } else {
-    mostrar('screen-counter');
-    iniciarContador();
-  }
-}
+// Uma volta a cada 70 segundos
+const ORBIT_SPEED=(Math.PI*2)/(70000/16.67);
 
-// ── CONTADOR ────────────────────────────────
-const elDays    = document.getElementById('days');
-const elHours   = document.getElementById('hours');
-const elMinutes = document.getElementById('minutes');
-const elSeconds = document.getElementById('seconds');
-const celebrate = document.getElementById('celebrate');
-const grid      = document.getElementById('grid');
-const prev      = {};
+// Duração da espiral — todas as estrelas têm exatamente a mesma
+const SPIRAL_DUR=1600;
 
-function pad(n) { return String(n).padStart(2, '0'); }
+// Número de voltas que cada estrela dá enquanto espirala
+const SPIRAL_TURNS=1.6;
 
-function flip(el, val) {
-  if (prev[el.id] === val) return;
-  prev[el.id] = val;
-  el.textContent = val;
-  el.classList.remove('flip');
-  void el.offsetWidth;
-  el.classList.add('flip');
-}
+let W,H,CX,CY,R;
+let labelEls=[];
+let revealed=false;
+let revealMs=0;
 
-function iniciarContador() {
-  let revelado = false;
+// Ângulos finais simétricos, fixos desde o início
+const finalAngles=items.map((_,i)=>(i/N)*Math.PI*2 - Math.PI/2);
 
-  function tick() {
-    const diff = TARGET - new Date();
+const stars=items.map((item,i)=>({
+  item,
+  // A espiral começa deste ângulo e termina em finalAngles[i]
+  // Como a espiral percorre SPIRAL_TURNS voltas, o ângulo de início é:
+  startAngle: finalAngles[i] - Math.PI*2*SPIRAL_TURNS,
+  finalAngle: finalAngles[i],
+  angle: 0,
+  radius: 0,
+  phase:'idle', // idle | spiral | orbit
+  glowPulse: Math.random()*Math.PI*2,
+  glowSpeed: 0.012+Math.random()*0.008,
+}));
 
-    if (diff <= 0 && !revelado) {
-      revelado = true;
-      localStorage.setItem('contadorEncerrado', 'true');
-      const counter = document.getElementById('screen-counter');
-      counter.classList.add('fadeout');
-      setTimeout(() => {
-        counter.style.display = 'none';
-        mostrar('screen-login');
-      }, 900);
-      return;
-    }
+const trails=items.map(()=>[]);
 
-    if (diff > 0) {
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000)  / 60000);
-      const s = Math.floor((diff % 60000)    / 1000);
-
-      flip(elDays,    pad(d));
-      flip(elHours,   pad(h));
-      flip(elMinutes, pad(m));
-      flip(elSeconds, pad(s));
-
-      // Remove cards suavemente quando chegam a zero
-      const cardDays    = document.getElementById('card-days');
-      const cardHours   = document.getElementById('card-hours');
-      const cardMinutes = document.getElementById('card-minutes');
-
-      if (d === 0 && cardDays    && !cardDays.classList.contains('hide'))    cardDays.classList.add('hide');
-      if (h === 0 && d === 0 && cardHours   && !cardHours.classList.contains('hide'))   cardHours.classList.add('hide');
-      if (m === 0 && h === 0 && d === 0 && cardMinutes && !cardMinutes.classList.contains('hide')) cardMinutes.classList.add('hide');
-    }
-  }
-
-  tick();
-  setInterval(tick, 1000);
-}
-
-// ── LOGIN ────────────────────────────────────
-function handleLogin() {
-  const user  = document.getElementById('input-user').value.trim();
-  const pass  = document.getElementById('input-pass').value;
-  const erro  = document.getElementById('login-error');
-  const hash  = btoa(pass);
-  const valido = CREDENTIALS.some(c => c.user === user && c.passHash === hash);
-
-  if (valido) {
-    sessionStorage.setItem('autenticado', 'true');
-    const login = document.getElementById('screen-login');
-    login.classList.add('fadeout');
-    setTimeout(() => { window.location.href = 'site.html'; }, 800);
-  } else {
-    erro.textContent = 'usuário ou senha incorretos.';
-    setTimeout(() => erro.textContent = '', 3000);
-  }
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
-
-function mostrar(id) { document.getElementById(id).style.display = 'flex'; }
-
-// ── PÉTALAS ──────────────────────────────────
-const canvas = document.getElementById('bg');
-const ctx    = canvas.getContext('2d');
-let petals   = [];
-
-const COLORS = [
-  'rgba(192,57,90,',
-  'rgba(232,135,154,',
-  'rgba(245,198,208,',
-  'rgba(123,30,58,',
-];
-
-function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
-
-function mkPetal() {
-  return {
-    x: Math.random() * canvas.width, y: -20 - Math.random() * 60,
-    rx: 5 + Math.random() * 8, ry: 3 + Math.random() * 5,
-    angle: Math.random() * Math.PI * 2, spin: (Math.random() - .5) * .04,
-    vx: (Math.random() - .5) * .6, vy: .45 + Math.random() * .85,
-    alpha: .15 + Math.random() * .45,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    wave: Math.random() * Math.PI * 2,
-  };
-}
-
-function initPetals() {
-  petals = [];
-  const n = Math.min(65, Math.floor(canvas.width / 16));
-  for (let i = 0; i < n; i++) {
-    const p = mkPetal();
-    p.y = Math.random() * canvas.height;
-    petals.push(p);
-  }
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  petals.forEach(p => {
-    p.wave += .012; p.x += p.vx + Math.sin(p.wave) * .4;
-    p.y += p.vy; p.angle += p.spin;
-    if (p.y > canvas.height + 30) Object.assign(p, mkPetal());
-    ctx.save();
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.angle);
-    ctx.scale(1, p.ry / p.rx);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, p.rx, p.rx * .65, 0, 0, Math.PI * 2);
-    ctx.fillStyle = p.color + p.alpha + ')';
-    ctx.fill();
-    ctx.restore();
+function setup(){
+  W=cv.width=scene.offsetWidth;
+  H=cv.height=scene.offsetHeight;
+  CX=W/2; CY=H/2; R=W*0.39;
+  labelEls.forEach(e=>e.remove()); labelEls=[];
+  items.forEach((item,i)=>{
+    const el=document.createElement('div');
+    el.className='star-label';
+    el.textContent=item.label;
+    el.addEventListener('click',()=>{ if(revealed) location.href=item.href; });
+    scene.appendChild(el);
+    labelEls.push(el);
   });
-  requestAnimationFrame(draw);
 }
 
-window.addEventListener('resize', () => { resize(); initPetals(); });
-resize(); initPetals(); draw();
+function startReveal(){
+  revealed=true;
+  revealMs=performance.now();
+  document.getElementById('hint').classList.add('gone');
+  const pulse=document.getElementById('pulse');
+  pulse.classList.remove('go'); void pulse.offsetWidth; pulse.classList.add('go');
+  stars.forEach(s=>{
+    s.phase='spiral';
+    s.angle=s.startAngle;
+    s.radius=0;
+    trails[s.item? items.indexOf(s.item):0]=[];
+  });
+}
 
-init();
+function easeOutQuart(t){ return 1-Math.pow(1-t,4); }
+
+let ringAlpha=0, lineAlpha=0;
+
+function frame(now){
+  ctx.clearRect(0,0,W,H);
+
+  if(revealed){
+    const elapsed=now-revealMs;
+    // Anel aparece gradualmente após as estrelas chegarem
+    if(elapsed>SPIRAL_DUR){
+      ringAlpha=Math.min((elapsed-SPIRAL_DUR)/1200, 1)*0.08;
+      lineAlpha=Math.min((elapsed-SPIRAL_DUR)/1600, 1)*0.06;
+    }
+  }
+
+  // Anel orbital decorativo
+  if(ringAlpha>0){
+    ctx.save();
+    ctx.strokeStyle=`rgba(232,135,154,${ringAlpha})`;
+    ctx.lineWidth=1; ctx.setLineDash([2,12]);
+    ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+  }
+
+  // Linhas de constelação
+  if(lineAlpha>0){
+    ctx.save();
+    ctx.strokeStyle=`rgba(232,135,154,${lineAlpha})`;
+    ctx.lineWidth=1; ctx.setLineDash([3,9]);
+    stars.forEach((s,i)=>{
+      if(s.phase!=='orbit') return;
+      const ns=stars[(i+1)%N];
+      if(ns.phase!=='orbit') return;
+      ctx.beginPath();
+      ctx.moveTo(CX+Math.cos(s.angle)*R, CY+Math.sin(s.angle)*R);
+      ctx.lineTo(CX+Math.cos(ns.angle)*R, CY+Math.sin(ns.angle)*R);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]); ctx.restore();
+  }
+
+  stars.forEach((s,i)=>{
+    if(s.phase==='idle') return;
+
+    let x,y,alpha,coreR;
+
+    if(s.phase==='spiral'){
+      const elapsed=now-revealMs;
+      const t=Math.min(elapsed/SPIRAL_DUR, 1);
+      const e=easeOutQuart(t);
+
+      // Interpolação direta: ângulo vai de startAngle até finalAngle
+      s.angle=s.startAngle + (s.finalAngle - s.startAngle)*e;
+      s.radius=e*R;
+
+      alpha=Math.min(t*3, 1);
+      coreR=3+e*3;
+
+      x=CX+Math.cos(s.angle)*s.radius;
+      y=CY+Math.sin(s.angle)*s.radius;
+
+      trails[i].push({x,y});
+      if(trails[i].length>45) trails[i].shift();
+
+      if(t>=1){
+        s.phase='orbit';
+        s.angle=s.finalAngle;
+        trails[i]=[];
+      }
+    }
+    else if(s.phase==='orbit'){
+      s.angle+=ORBIT_SPEED;
+      s.glowPulse+=s.glowSpeed;
+      x=CX+Math.cos(s.angle)*R;
+      y=CY+Math.sin(s.angle)*R;
+      alpha=1; coreR=5.5;
+    }
+
+    if(x==null) return;
+
+    // Trilha espiral
+    if(trails[i].length>1){
+      for(let j=1;j<trails[i].length;j++){
+        const ta=j/trails[i].length;
+        const p=trails[i][j-1],q=trails[i][j];
+        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle=`rgba(192,57,90,${ta*0.4})`;
+        ctx.lineWidth=1.5*(1-ta)+0.3;
+        ctx.stroke();
+      }
+    }
+
+    // Glow
+    const gA=(s.phase==='orbit') ? 0.28+0.12*Math.sin(s.glowPulse) : alpha*0.32;
+    const grd=ctx.createRadialGradient(x,y,0,x,y,coreR*6);
+    grd.addColorStop(0,`rgba(192,57,90,${gA})`);
+    grd.addColorStop(1,'rgba(192,57,90,0)');
+    ctx.beginPath();ctx.arc(x,y,coreR*6,0,Math.PI*2);
+    ctx.fillStyle=grd;ctx.fill();
+
+    // Núcleo
+    const cr=ctx.createRadialGradient(x,y,0,x,y,coreR);
+    cr.addColorStop(0,`rgba(255,245,250,${alpha})`);
+    cr.addColorStop(0.4,`rgba(232,135,154,${alpha})`);
+    cr.addColorStop(1,`rgba(192,57,90,${alpha*0.4})`);
+    ctx.beginPath();ctx.arc(x,y,coreR,0,Math.PI*2);
+    ctx.fillStyle=cr;ctx.fill();
+
+    // Cruz 4 pontas em órbita
+    if(s.phase==='orbit'){
+      ctx.save();ctx.translate(x,y);
+      ctx.globalAlpha=0.35+0.18*Math.sin(s.glowPulse);
+      ctx.strokeStyle='rgba(255,230,240,0.85)';ctx.lineWidth=0.8;
+      const len=coreR*2.8;
+      ctx.beginPath();ctx.moveTo(0,-len);ctx.lineTo(0,len);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(-len,0);ctx.lineTo(len,0);ctx.stroke();
+      ctx.restore();
+    }
+
+    // Label
+    if(labelEls[i]){
+      const el=labelEls[i];
+      el.style.left=`${x}px`;
+      el.style.top=`${y+coreR+13}px`;
+      if(s.phase==='orbit' && !el.classList.contains('show')) el.classList.add('show');
+    }
+  });
+
+  requestAnimationFrame(frame);
+}
+
+document.getElementById('center').addEventListener('click',()=>{ if(!revealed) startReveal(); });
+setup();
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>
