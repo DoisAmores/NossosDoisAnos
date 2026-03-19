@@ -3,29 +3,164 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Menu Espiral — Versão 4</title>
+  <title>Nossos Dois Anos ✦</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=EB+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
   <style>
-    :root{--rose-mid:#c0395a;--rose-light:#e8879a;--muted:rgba(253,240,243,0.45);}
+    :root{
+      --rose-mid:#c0395a;
+      --rose-light:#e8879a;
+      --rose-pale:#f5c6d0;
+      --muted:rgba(253,240,243,0.45);
+    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{min-height:100vh;background:radial-gradient(ellipse at 40% 40%,#180028 0%,#060010 65%);font-family:'EB Garamond',serif;color:#fdf0f3;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+
+    body{
+      min-height:100vh;
+      background:radial-gradient(ellipse at 40% 40%,#180028 0%,#060010 65%);
+      font-family:'EB Garamond',serif;
+      color:#fdf0f3;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* ── BG CANVAS ── */
     canvas.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
-    .scene{position:relative;z-index:10;width:min(92vw,580px);height:min(92vw,580px);display:flex;align-items:center;justify-content:center;}
+
+    /* ── SCENE ── */
+    .scene{
+      position:relative;z-index:10;
+      width:min(92vw,580px);
+      height:min(92vw,580px);
+      display:flex;align-items:center;justify-content:center;
+    }
     canvas.main{position:absolute;inset:0;z-index:5;}
-    .center{position:absolute;text-align:center;z-index:20;display:flex;flex-direction:column;align-items:center;gap:0.5rem;cursor:pointer;user-select:none;}
-    .center h1{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.5rem,4.5vw,2.4rem);background:linear-gradient(135deg,#fce7f3,var(--rose-light),var(--rose-mid));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
-    .hint{font-size:0.7rem;color:var(--muted);letter-spacing:0.2em;transition:opacity 0.5s;}
+
+    /* ── CENTRO ── */
+    .center{
+      position:absolute;text-align:center;z-index:20;
+      display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+      cursor:pointer;user-select:none;
+    }
+    .center h1{
+      font-family:'Playfair Display',serif;font-style:italic;
+      font-size:clamp(1.5rem,4.5vw,2.4rem);
+      background:linear-gradient(135deg,#fce7f3,var(--rose-light),var(--rose-mid));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      line-height:1.2;
+    }
+    .hint{
+      font-size:0.7rem;color:var(--muted);letter-spacing:0.2em;
+      transition:opacity 0.5s;
+    }
     .hint.gone{opacity:0;pointer-events:none;}
-    .pulse-ring{position:absolute;width:80px;height:80px;border-radius:50%;border:2px solid rgba(232,135,154,0.8);pointer-events:none;opacity:0;}
+
+    /* ── RIPPLE ── */
+    .pulse-ring{
+      position:absolute;width:80px;height:80px;border-radius:50%;
+      border:2px solid rgba(232,135,154,0.8);pointer-events:none;opacity:0;
+    }
     .pulse-ring.go{animation:pulseOut 0.8s ease forwards;}
-    @keyframes pulseOut{0%{transform:scale(1);opacity:0.8;}100%{transform:scale(6);opacity:0;}}
-    .star-label{position:absolute;transform:translate(-50%,-50%);font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(232,135,154,0);white-space:nowrap;pointer-events:none;z-index:21;transition:color 0.5s,opacity 0.5s;opacity:0;}
-    .star-label.show{color:rgba(232,135,154,0.45);pointer-events:auto;cursor:pointer;opacity:1;}
+    @keyframes pulseOut{
+      0%{transform:scale(1);opacity:0.8;}
+      100%{transform:scale(6);opacity:0;}
+    }
+
+    /* ── LABELS DAS ESTRELAS ── */
+    .star-label{
+      position:absolute;transform:translate(-50%,-50%);
+      font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;
+      color:rgba(232,135,154,0);white-space:nowrap;
+      pointer-events:none;z-index:21;
+      transition:color 0.5s,opacity 0.5s;opacity:0;
+    }
+    .star-label.show{
+      color:rgba(232,135,154,0.45);
+      pointer-events:auto;cursor:pointer;opacity:1;
+    }
     .star-label.show:hover{color:var(--rose-light);}
+
+    /* ── PLAYER FLUTUANTE ── */
+    #player{
+      position:fixed;bottom:1.5rem;right:1.5rem;
+      z-index:100;display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;
+    }
+
+    /* Controles expandidos */
+    #player-controls{
+      display:flex;align-items:center;gap:0.5rem;
+      background:rgba(17,2,8,0.85);
+      border:1px solid rgba(232,135,154,0.2);
+      border-radius:99px;
+      padding:0.4rem 0.9rem 0.4rem 0.7rem;
+      backdrop-filter:blur(12px);
+      overflow:hidden;
+      max-width:0;opacity:0;
+      transition:max-width 0.4s cubic-bezier(.4,0,.2,1), opacity 0.35s ease, padding 0.4s;
+      white-space:nowrap;
+    }
+    #player-controls.open{max-width:220px;opacity:1;}
+
+    .player-btn{
+      background:none;border:none;cursor:pointer;
+      color:rgba(232,135,154,0.7);font-size:1rem;
+      padding:0.2rem;line-height:1;
+      transition:color 0.2s,transform 0.2s;
+    }
+    .player-btn:hover{color:var(--rose-light);transform:scale(1.2);}
+
+    #player-title{
+      font-size:0.62rem;letter-spacing:0.1em;
+      color:rgba(232,135,154,0.5);
+      max-width:110px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap;
+      font-family:'EB Garamond',serif;font-style:italic;
+    }
+
+    /* Botão principal (nota musical) */
+    #player-toggle{
+      width:40px;height:40px;border-radius:50%;
+      background:rgba(17,2,8,0.85);
+      border:1px solid rgba(232,135,154,0.25);
+      backdrop-filter:blur(12px);
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      color:rgba(232,135,154,0.7);font-size:1.1rem;
+      transition:border-color 0.3s,color 0.3s,transform 0.2s;
+      flex-shrink:0;
+    }
+    #player-toggle:hover{border-color:rgba(232,135,154,0.5);color:var(--rose-light);transform:scale(1.08);}
+    #player-toggle.playing{color:var(--rose-light);border-color:rgba(232,135,154,0.4);}
+
+    /* Barra de progresso minimalista */
+    #player-bar{
+      width:100%;height:1px;
+      background:rgba(232,135,154,0.1);
+      border-radius:1px;
+      overflow:hidden;
+      display:none;
+    }
+    #player-bar.show{display:block;}
+    #player-progress{
+      height:100%;width:0%;
+      background:linear-gradient(90deg,var(--rose-mid),var(--rose-light));
+      transition:width 1s linear;
+    }
   </style>
 </head>
 <body>
+
+<!-- Verificação de autenticação -->
+<script>
+  if(sessionStorage.getItem('autenticado') !== 'true'){
+    window.location.href = 'index.html';
+  }
+</script>
+
 <canvas class="bg" id="bg"></canvas>
+
+<!-- Menu -->
 <div class="scene" id="scene">
   <canvas class="main" id="main"></canvas>
   <div class="pulse-ring" id="pulse"></div>
@@ -34,7 +169,116 @@
     <p class="hint" id="hint">toque para explorar ✦</p>
   </div>
 </div>
+
+<!-- Player flutuante -->
+<div id="player">
+  <div style="display:flex;align-items:center;gap:0.5rem;">
+    <div id="player-controls">
+      <button class="player-btn" id="btn-prev" title="Anterior">⏮</button>
+      <button class="player-btn" id="btn-play" title="Pausar">⏸</button>
+      <button class="player-btn" id="btn-next" title="Próxima">⏭</button>
+      <span id="player-title">—</span>
+    </div>
+    <button id="player-toggle" title="Música">♪</button>
+  </div>
+  <div id="player-bar"><div id="player-progress"></div></div>
+</div>
+
+<audio id="audio"></audio>
+
 <script>
+// ═══════════════════════════════════════════════════════
+// MÚSICA DE FUNDO
+// ═══════════════════════════════════════════════════════
+// Adicione os arquivos .mp3 na pasta musicas/ do repositório
+// e liste os nomes aqui:
+const PLAYLIST = [
+  // Exemplo: { title: 'Nome da Música', src: 'musicas/musica1.mp3' },
+  // { title: 'Nome da Música 2', src: 'musicas/musica2.mp3' },
+];
+
+const audio      = document.getElementById('audio');
+const btnPlay    = document.getElementById('btn-play');
+const btnPrev    = document.getElementById('btn-prev');
+const btnNext    = document.getElementById('btn-next');
+const titleEl    = document.getElementById('player-title');
+const toggleBtn  = document.getElementById('player-toggle');
+const controls   = document.getElementById('player-controls');
+const bar        = document.getElementById('player-bar');
+const progress   = document.getElementById('player-progress');
+
+let currentIdx = 0;
+let playerOpen = false;
+let isPlaying  = false;
+
+function shuffleFirst(){
+  if(PLAYLIST.length === 0) return;
+  currentIdx = Math.floor(Math.random() * PLAYLIST.length);
+}
+
+function loadTrack(idx){
+  if(PLAYLIST.length === 0){ titleEl.textContent = '—'; return; }
+  currentIdx = (idx + PLAYLIST.length) % PLAYLIST.length;
+  audio.src  = PLAYLIST[currentIdx].src;
+  titleEl.textContent = PLAYLIST[currentIdx].title;
+  if(isPlaying){ audio.play().catch(()=>{}); }
+}
+
+function play(){
+  if(PLAYLIST.length === 0) return;
+  audio.play().then(()=>{
+    isPlaying = true;
+    btnPlay.textContent = '⏸';
+    toggleBtn.classList.add('playing');
+    bar.classList.add('show');
+  }).catch(()=>{});
+}
+
+function pause(){
+  audio.pause();
+  isPlaying = false;
+  btnPlay.textContent = '▶';
+  toggleBtn.classList.remove('playing');
+}
+
+btnPlay.addEventListener('click', ()=>{ isPlaying ? pause() : play(); });
+btnNext.addEventListener('click', ()=>{ loadTrack(currentIdx + 1); if(isPlaying) play(); });
+btnPrev.addEventListener('click', ()=>{ loadTrack(currentIdx - 1); if(isPlaying) play(); });
+audio.addEventListener('ended',  ()=>{ loadTrack(currentIdx + 1); play(); });
+
+audio.addEventListener('timeupdate', ()=>{
+  if(!audio.duration) return;
+  progress.style.width = (audio.currentTime / audio.duration * 100) + '%';
+});
+
+toggleBtn.addEventListener('click', ()=>{
+  playerOpen = !playerOpen;
+  controls.classList.toggle('open', playerOpen);
+  // Toca automaticamente na primeira abertura
+  if(playerOpen && !isPlaying && PLAYLIST.length > 0){
+    if(!audio.src){ shuffleFirst(); loadTrack(currentIdx); }
+    play();
+  }
+});
+
+// Inicia com música aleatória (mas aguarda interação do usuário)
+if(PLAYLIST.length > 0){
+  shuffleFirst();
+  loadTrack(currentIdx);
+  // Tenta autoplay — funciona em alguns browsers após interação prévia (login)
+  audio.play().then(()=>{
+    isPlaying=true;
+    btnPlay.textContent='⏸';
+    toggleBtn.classList.add('playing');
+    bar.classList.add('show');
+  }).catch(()=>{
+    // Browser bloqueou — aguarda o usuário clicar no player
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// MENU — ESPIRAL ORBITAL
+// ═══════════════════════════════════════════════════════
 const items=[
   {label:'álbum',          href:'album.html'},
   {label:'linha do tempo', href:'linha-do-tempo.html'},
@@ -43,7 +287,7 @@ const items=[
   {label:'segredo',        href:'segredo.html'},
 ];
 
-// ── BG ───────────────────────────────────────────────────────────────
+// ── BG ─────────────────────────────────────────────────
 const bgCv=document.getElementById('bg'),bgCtx=bgCv.getContext('2d');
 let bgS=[];
 function resizeBg(){bgCv.width=innerWidth;bgCv.height=innerHeight;}
@@ -53,19 +297,14 @@ function drawBg(){bgCtx.clearRect(0,0,bgCv.width,bgCv.height);bgS.forEach(s=>{s.
 window.addEventListener('resize',()=>{resizeBg();initBg();setup();});
 resizeBg();initBg();drawBg();
 
-// ── MAIN ─────────────────────────────────────────────────────────────
+// ── ÓRBITA ─────────────────────────────────────────────
 const scene=document.getElementById('scene');
 const cv=document.getElementById('main');
 const ctx=cv.getContext('2d');
 const N=items.length;
 
-// Uma volta a cada 70 segundos
-const ORBIT_SPEED=(Math.PI*2)/(70000/16.67);
-
-// Duração da espiral — todas as estrelas têm exatamente a mesma
+const ORBIT_SPEED=(Math.PI*2)/(70000/16.67); // uma volta a cada 70s
 const SPIRAL_DUR=1600;
-
-// Número de voltas que cada estrela dá enquanto espirala
 const SPIRAL_TURNS=1.6;
 
 let W,H,CX,CY,R;
@@ -73,20 +312,16 @@ let labelEls=[];
 let revealed=false;
 let revealMs=0;
 
-// Ângulos finais simétricos, fixos desde o início
 const finalAngles=items.map((_,i)=>(i/N)*Math.PI*2 - Math.PI/2);
 
 const stars=items.map((item,i)=>({
   item,
-  // A espiral começa deste ângulo e termina em finalAngles[i]
-  // Como a espiral percorre SPIRAL_TURNS voltas, o ângulo de início é:
   startAngle: finalAngles[i] - Math.PI*2*SPIRAL_TURNS,
   finalAngle: finalAngles[i],
-  angle: 0,
-  radius: 0,
-  phase:'idle', // idle | spiral | orbit
-  glowPulse: Math.random()*Math.PI*2,
-  glowSpeed: 0.012+Math.random()*0.008,
+  angle:0, radius:0,
+  phase:'idle',
+  glowPulse:Math.random()*Math.PI*2,
+  glowSpeed:0.012+Math.random()*0.008,
 }));
 
 const trails=items.map(()=>[]);
@@ -112,11 +347,11 @@ function startReveal(){
   document.getElementById('hint').classList.add('gone');
   const pulse=document.getElementById('pulse');
   pulse.classList.remove('go'); void pulse.offsetWidth; pulse.classList.add('go');
-  stars.forEach(s=>{
+  stars.forEach((s,i)=>{
     s.phase='spiral';
     s.angle=s.startAngle;
     s.radius=0;
-    trails[s.item? items.indexOf(s.item):0]=[];
+    trails[i]=[];
   });
 }
 
@@ -129,14 +364,13 @@ function frame(now){
 
   if(revealed){
     const elapsed=now-revealMs;
-    // Anel aparece gradualmente após as estrelas chegarem
     if(elapsed>SPIRAL_DUR){
-      ringAlpha=Math.min((elapsed-SPIRAL_DUR)/1200, 1)*0.08;
-      lineAlpha=Math.min((elapsed-SPIRAL_DUR)/1600, 1)*0.06;
+      ringAlpha=Math.min((elapsed-SPIRAL_DUR)/1200,1)*0.08;
+      lineAlpha=Math.min((elapsed-SPIRAL_DUR)/1600,1)*0.06;
     }
   }
 
-  // Anel orbital decorativo
+  // Anel orbital
   if(ringAlpha>0){
     ctx.save();
     ctx.strokeStyle=`rgba(232,135,154,${ringAlpha})`;
@@ -169,27 +403,17 @@ function frame(now){
 
     if(s.phase==='spiral'){
       const elapsed=now-revealMs;
-      const t=Math.min(elapsed/SPIRAL_DUR, 1);
+      const t=Math.min(elapsed/SPIRAL_DUR,1);
       const e=easeOutQuart(t);
-
-      // Interpolação direta: ângulo vai de startAngle até finalAngle
-      s.angle=s.startAngle + (s.finalAngle - s.startAngle)*e;
+      s.angle=s.startAngle+(s.finalAngle-s.startAngle)*e;
       s.radius=e*R;
-
-      alpha=Math.min(t*3, 1);
+      alpha=Math.min(t*3,1);
       coreR=3+e*3;
-
       x=CX+Math.cos(s.angle)*s.radius;
       y=CY+Math.sin(s.angle)*s.radius;
-
       trails[i].push({x,y});
       if(trails[i].length>45) trails[i].shift();
-
-      if(t>=1){
-        s.phase='orbit';
-        s.angle=s.finalAngle;
-        trails[i]=[];
-      }
+      if(t>=1){ s.phase='orbit'; s.angle=s.finalAngle; trails[i]=[]; }
     }
     else if(s.phase==='orbit'){
       s.angle+=ORBIT_SPEED;
@@ -201,7 +425,7 @@ function frame(now){
 
     if(x==null) return;
 
-    // Trilha espiral
+    // Trilha
     if(trails[i].length>1){
       for(let j=1;j<trails[i].length;j++){
         const ta=j/trails[i].length;
@@ -214,7 +438,7 @@ function frame(now){
     }
 
     // Glow
-    const gA=(s.phase==='orbit') ? 0.28+0.12*Math.sin(s.glowPulse) : alpha*0.32;
+    const gA=(s.phase==='orbit')?0.28+0.12*Math.sin(s.glowPulse):alpha*0.32;
     const grd=ctx.createRadialGradient(x,y,0,x,y,coreR*6);
     grd.addColorStop(0,`rgba(192,57,90,${gA})`);
     grd.addColorStop(1,'rgba(192,57,90,0)');
@@ -229,7 +453,7 @@ function frame(now){
     ctx.beginPath();ctx.arc(x,y,coreR,0,Math.PI*2);
     ctx.fillStyle=cr;ctx.fill();
 
-    // Cruz 4 pontas em órbita
+    // Cruz 4 pontas
     if(s.phase==='orbit'){
       ctx.save();ctx.translate(x,y);
       ctx.globalAlpha=0.35+0.18*Math.sin(s.glowPulse);
