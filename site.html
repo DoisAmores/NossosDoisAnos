@@ -3,482 +3,723 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nossos Dois Anos ✦</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=EB+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
+  <title>Nós Dois ♡</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400;1,700&family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
-    :root{
-      --rose-mid:#c0395a;
-      --rose-light:#e8879a;
-      --rose-pale:#f5c6d0;
-      --muted:rgba(253,240,243,0.45);
+    :root {
+      --rose-mid:   #c0395a;
+      --rose-light: #e8879a;
+      --rose-pale:  #f5c6d0;
+      --gold:       #c9955c;
+      --gold-light: #e8c49a;
+      --bg:         #0a0108;
+      --text:       #fdf0f3;
+      --muted:      rgba(253,240,243,0.4);
+      --divider:    rgba(232,135,154,0.15);
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
-    body{
-      min-height:100vh;
-      background:radial-gradient(ellipse at 40% 40%,#180028 0%,#060010 65%);
-      font-family:'EB Garamond',serif;
-      color:#fdf0f3;
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    /* ── BG CANVAS ── */
-    canvas.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
-
-    /* ── SCENE ── */
-    .scene{
-      position:relative;z-index:10;
-      width:min(92vw,580px);
-      height:min(92vw,580px);
-      display:flex;align-items:center;justify-content:center;
-    }
-    canvas.main{position:absolute;inset:0;z-index:5;}
-
-    /* ── CENTRO ── */
-    .center{
-      position:absolute;text-align:center;z-index:20;
-      display:flex;flex-direction:column;align-items:center;gap:0.5rem;
-      cursor:pointer;user-select:none;
-    }
-    .center h1{
-      font-family:'Playfair Display',serif;font-style:italic;
-      font-size:clamp(1.5rem,4.5vw,2.4rem);
-      background:linear-gradient(135deg,#fce7f3,var(--rose-light),var(--rose-mid));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      line-height:1.2;
-    }
-    .hint{
-      font-size:0.7rem;color:var(--muted);letter-spacing:0.2em;
-      transition:opacity 0.5s;
-    }
-    .hint.gone{opacity:0;pointer-events:none;}
-
-    /* ── RIPPLE ── */
-    .pulse-ring{
-      position:absolute;width:80px;height:80px;border-radius:50%;
-      border:2px solid rgba(232,135,154,0.8);pointer-events:none;opacity:0;
-    }
-    .pulse-ring.go{animation:pulseOut 0.8s ease forwards;}
-    @keyframes pulseOut{
-      0%{transform:scale(1);opacity:0.8;}
-      100%{transform:scale(6);opacity:0;}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
     }
 
-    /* ── LABELS DAS ESTRELAS ── */
-    .star-label{
-      position:absolute;transform:translate(-50%,-50%);
-      font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;
-      color:rgba(232,135,154,0);white-space:nowrap;
-      pointer-events:none;z-index:21;
-      transition:color 0.5s,opacity 0.5s;opacity:0;
+    /* ── PARALLAX ── */
+    .parallax-wrap {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
     }
-    .star-label.show{
-      color:rgba(232,135,154,0.45);
-      pointer-events:auto;cursor:pointer;opacity:1;
-    }
-    .star-label.show:hover{color:var(--rose-light);}
+    .p-layer { position: absolute; inset: -40% 0; will-change: transform; }
 
-    /* ── PLAYER FLUTUANTE ── */
-    #player{
-      position:fixed;bottom:1.5rem;right:1.5rem;
-      z-index:100;display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;
+    /* Camada 1 — mais lenta, manchas grandes e escuras */
+    .p-layer-1 {
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, rgba(100,5,32,0.7) 0%, transparent 55%),
+        radial-gradient(ellipse 75% 55% at 90% 80%, rgba(80,3,25,0.65) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 45% at 50% 55%, rgba(45,2,15,0.5) 0%, transparent 60%);
     }
 
-    /* Controles expandidos */
-    #player-controls{
-      display:flex;align-items:center;gap:0.5rem;
-      background:rgba(17,2,8,0.85);
-      border:1px solid rgba(232,135,154,0.2);
-      border-radius:99px;
-      padding:0.4rem 0.9rem 0.4rem 0.7rem;
-      backdrop-filter:blur(12px);
-      overflow:hidden;
-      max-width:0;opacity:0;
-      transition:max-width 0.4s cubic-bezier(.4,0,.2,1), opacity 0.35s ease, padding 0.4s;
-      white-space:nowrap;
-    }
-    #player-controls.open{max-width:220px;opacity:1;}
-
-    .player-btn{
-      background:none;border:none;cursor:pointer;
-      color:rgba(232,135,154,0.7);font-size:1rem;
-      padding:0.2rem;line-height:1;
-      transition:color 0.2s,transform 0.2s;
-    }
-    .player-btn:hover{color:var(--rose-light);transform:scale(1.2);}
-
-    #player-title{
-      font-size:0.62rem;letter-spacing:0.1em;
-      color:rgba(232,135,154,0.5);
-      max-width:110px;overflow:hidden;
-      text-overflow:ellipsis;white-space:nowrap;
-      font-family:'EB Garamond',serif;font-style:italic;
+    /* Camada 2 — velocidade média, tom mais rosado */
+    .p-layer-2 {
+      background:
+        radial-gradient(ellipse 65% 50% at 85% 10%, rgba(140,20,55,0.45) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 45% at 15% 90%, rgba(115,12,42,0.4) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 38% at 55% 48%, rgba(150,40,70,0.15) 0%, transparent 60%);
     }
 
-    /* Botão principal (nota musical) */
-    #player-toggle{
-      width:40px;height:40px;border-radius:50%;
-      background:rgba(17,2,8,0.85);
-      border:1px solid rgba(232,135,154,0.25);
-      backdrop-filter:blur(12px);
-      cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
-      color:rgba(232,135,154,0.7);font-size:1.1rem;
-      transition:border-color 0.3s,color 0.3s,transform 0.2s;
-      flex-shrink:0;
+    /* Camada 3 — mais rápida, brilhos rose claros */
+    .p-layer-3 {
+      background:
+        radial-gradient(ellipse 50% 40% at 48% 42%, rgba(180,70,100,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse 35% 28% at 25% 25%, rgba(200,100,125,0.09) 0%, transparent 50%),
+        radial-gradient(ellipse 35% 28% at 75% 75%, rgba(165,60,90,0.08) 0%, transparent 50%);
     }
-    #player-toggle:hover{border-color:rgba(232,135,154,0.5);color:var(--rose-light);transform:scale(1.08);}
-    #player-toggle.playing{color:var(--rose-light);border-color:rgba(232,135,154,0.4);}
 
-    /* Barra de progresso minimalista */
-    #player-bar{
-      width:100%;height:1px;
-      background:rgba(232,135,154,0.1);
-      border-radius:1px;
-      overflow:hidden;
-      display:none;
+    /* Camada 4 — canvas com estrelas/partículas sutis */
+    #pl4 { inset: 0; width: 100%; height: 100%; }
+
+    /* ── CONTENT ── */
+    .content { position: relative; z-index: 10; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 25vh 2rem 3rem;
     }
-    #player-bar.show{display:block;}
-    #player-progress{
-      height:100%;width:0%;
-      background:linear-gradient(90deg,var(--rose-mid),var(--rose-light));
-      transition:width 1s linear;
+
+    .hero-text {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2rem;
+      width: 100%;
+    }
+
+    .ornament {
+      display: flex; align-items: center; gap: 1rem;
+      animation: fadeUp 1.4s ease both 0.1s;
+    }
+    .orn-line { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, rgba(232,135,154,0.5)); }
+    .orn-line.r { background: linear-gradient(90deg, rgba(232,135,154,0.5), transparent); }
+    .orn-center { font-size: 1rem; color: rgba(232,135,154,0.5); letter-spacing: 0.3em; }
+
+    .hero-eyebrow {
+      font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(232,135,154,0.45);
+      animation: fadeUp 1.4s ease both 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-weight: 400;
+      font-size: clamp(3rem, 10vw, 6.5rem);
+      line-height: 1.05;
+      background: linear-gradient(160deg, #fce7f3 0%, var(--rose-light) 50%, rgba(192,57,90,0.9) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fadeUp 1.5s ease both 0.3s;
+    }
+
+    .hero-divider {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, rgba(232,135,154,0.4), transparent);
+      animation: fadeUp 1.5s ease both 0.45s;
+    }
+
+    .hero-sub {
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-style: italic; color: var(--muted);
+      line-height: 1.7; max-width: 420px;
+      animation: fadeUp 1.5s ease both 0.5s;
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+      color: rgba(232,135,154,0.3); font-size: 0.62rem; letter-spacing: 0.25em;
+      text-transform: uppercase;
+      animation: fadeUp 1.5s ease both 0.7s;
+    }
+    .scroll-line {
+      width: 1px; height: 45px;
+      background: linear-gradient(to bottom, rgba(232,135,154,0.4), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.4; } 50% { opacity: 1; }
+    }
+
+    /* ── CARROSSEL 3D ── */
+    .carousel-section {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      position: relative;
+      z-index: 10;
+      /* Limita altura para não detectar hover em área vazia */
+      overflow: hidden;
+    }
+
+    .carousel-3d-wrap {
+      position: relative;
+      width: min(96vw, 700px);
+      /* Altura maior para acomodar fotos quase quadradas */
+      height: min(65vw, 500px);
+    }
+
+    #carouselContainer {
+      position: absolute; width: 100%; height: 100%;
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    #contentContainer {
+      position: absolute; left: 50%; top: 50%;
+      width: 100%; height: 100%;
+      transform: translate(-50%, -50%);
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    .carouselItem {
+      position: absolute; left: 50%; top: 50%;
+      width: clamp(120px, 28vw, 320px);
+      height: clamp(109px, 25.5vw, 291px); /* 1.1:1 ratio */
+      margin-left: calc(clamp(120px, 28vw, 320px) / -2);
+      margin-top: calc(clamp(109px, 25.5vw, 291px) / -2);
+      visibility: hidden;
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    .carouselItemInner {
+      width: 100%; height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.55), 0 0 0 1px rgba(232,135,154,0.08);
+    }
+
+    .carouselItemInner img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+    }
+
+    /* Separador entre carrossel e cards */
+    .carousel-divider {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, transparent, rgba(232,135,154,0.2), transparent);
+      margin: 2rem auto 0;
+    }
+
+    /* ── CARDS WRAP ── */
+    .cards-wrap {
+      padding: 2rem 0 10rem;
+      border-top: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* ── CARD BASE ── */
+    .nav-card {
+      display: block; text-decoration: none; width: 100%;
+      padding: 4rem clamp(2rem, 6vw, 5rem);
+      position: relative; overflow: hidden; cursor: pointer;
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .nav-card.visible { opacity: 1; transform: translateY(0); }
+    .nav-card.hiding  { opacity: 0; transform: translateY(40px); }
+
+    /* Linha separadora */
+    .nav-card::before {
+      content: ''; position: absolute;
+      top: 0; left: clamp(2rem, 6vw, 5rem); right: clamp(2rem, 6vw, 5rem);
+      height: 1px; background: var(--divider);
+      transition: background 0.5s ease;
+    }
+    .nav-card:hover::before { background: rgba(232,135,154,0.3); }
+
+    /* Hover — fundo desliza da esquerda */
+    .nav-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(105deg, rgba(192,57,90,0.07) 0%, rgba(192,57,90,0.02) 60%, transparent 100%);
+      transform: translateX(-100%);
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-card:hover::after { transform: translateX(0); }
+
+    /* Linha lateral que cresce */
+    .card-accent {
+      position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 0;
+      background: linear-gradient(to bottom, transparent, var(--rose-mid), transparent);
+      transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 99px;
+    }
+    .nav-card:hover .card-accent { height: 70%; }
+
+    .card-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 2rem; position: relative; z-index: 1; max-width: 900px;
+    }
+    .card-left { display: flex; align-items: baseline; gap: 2rem; flex: 1; }
+
+    .card-index {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      color: rgba(192,57,90,0.2); line-height: 1; white-space: nowrap;
+      transition: color 0.4s ease; user-select: none;
+    }
+    .nav-card:hover .card-index { color: rgba(192,57,90,0.5); }
+
+    .card-text { flex: 1; }
+    .card-title {
+      font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400;
+      font-size: clamp(2rem, 3.5vw, 3.2rem); color: var(--text); line-height: 1.1;
+      transition: color 0.4s ease;
+    }
+    .nav-card:hover .card-title { color: var(--rose-pale); }
+
+    .card-desc {
+      margin-top: 0.4rem;
+      font-size: clamp(0.85rem, 1.8vw, 1rem);
+      color: var(--muted); font-style: italic; letter-spacing: 0.04em;
+      transition: color 0.4s ease;
+    }
+    .nav-card:hover .card-desc { color: rgba(245,198,208,0.6); }
+
+    .card-arrow {
+      color: rgba(192,57,90,0.3); font-size: 1.3rem;
+      transition: transform 0.4s ease, color 0.4s ease; flex-shrink: 0;
+    }
+    .nav-card:hover .card-arrow { transform: translateX(8px); color: var(--rose-mid); }
+
+    /* ── CARD ESPECIAL — 2 ANOS ── */
+    .nav-card-special {
+      position: relative;
+    }
+
+    /* Borda rose/dourada intensa nas laterais */
+    .nav-card-special .card-accent {
+      background: linear-gradient(to bottom, transparent, var(--gold), var(--rose-mid), transparent);
+      width: 3px;
+    }
+    .nav-card-special:hover .card-accent { height: 80%; }
+
+    /* Hover com tom dourado */
+    .nav-card-special::after {
+      background: linear-gradient(105deg, rgba(201,149,92,0.1) 0%, rgba(192,57,90,0.05) 60%, transparent 100%);
+    }
+    .nav-card-special:hover::before { background: rgba(201,149,92,0.35); }
+
+    /* Borda fina dourada no topo */
+    .nav-card-special::before {
+      background: linear-gradient(90deg, transparent, rgba(201,149,92,0.4), rgba(192,57,90,0.4), transparent) !important;
+      height: 1px;
+    }
+
+    /* Índice dourado */
+    .nav-card-special .card-index {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      opacity: 0.6;
+    }
+    .nav-card-special:hover .card-index { opacity: 1; }
+
+    /* Título dourado/rose */
+    .nav-card-special .card-title {
+      background: linear-gradient(135deg, #fce7f3, var(--rose-light), var(--gold-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .nav-card-special:hover .card-title {
+      background: linear-gradient(135deg, #fff, var(--rose-pale), var(--gold-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* Seta dourada */
+    .nav-card-special .card-arrow { color: rgba(201,149,92,0.4); }
+    .nav-card-special:hover .card-arrow { color: var(--gold); transform: translateX(8px); }
+
+    /* Ornamento floral discreto */
+    .card-ornament {
+      position: absolute; right: clamp(2rem, 8vw, 7rem); top: 50%; transform: translateY(-50%);
+      font-size: 1.1rem; opacity: 0.15; pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 1;
+    }
+    .nav-card-special:hover .card-ornament { opacity: 0.4; }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center; padding: 4rem 2rem 6rem;
+      color: rgba(232,135,154,0.2); font-size: 0.72rem; letter-spacing: 0.2em;
+    }
+    .footer span { display: inline-block; margin: 0 0.5rem; font-style: italic; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
 
-<!-- Verificação de autenticação -->
+<div class="parallax-wrap">
+  <div class="p-layer p-layer-1" id="pl1"></div>
+  <div class="p-layer p-layer-2" id="pl2"></div>
+  <div class="p-layer p-layer-3" id="pl3"></div>
+  <canvas class="p-layer" id="pl4"></canvas>
+</div>
+
+<div class="content">
+
+  <!-- HERO + CARROSSEL -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="ornament">
+        <div class="orn-line"></div>
+        <span class="orn-center">✦</span>
+        <div class="orn-line r"></div>
+      </div>
+      <p class="hero-eyebrow">desde 29 · 03 · 2024</p>
+      <h1 class="hero-title">nossa história</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-sub">alguma das nossas melhores memórias,<br/>todas aqui para a gente meu amor ❤️</p>
+    </div>
+  </section>
+
+  <!-- CARROSSEL 3D -->
+  <section class="carousel-section">
+    <div class="carousel-3d-wrap">
+        <div id="contentContainer">
+          <div id="carouselContainer">
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/008.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/026.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/049.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/053.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/056.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/068.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/080.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/087.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/099.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/102.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/113.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/134.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/148.jpg" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/157.webp" alt=""/></div></div>
+            <div class="carouselItem"><div class="carouselItemInner"><img src="Fotos/site/164.jpg" alt=""/></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CARDS -->
+  <div class="cards-wrap">
+
+    <!-- DESTAQUE: 2 ANOS -->
+    <a class="nav-card nav-card-special" href="2anos.html">
+      <div class="card-accent"></div>
+      <div class="card-ornament">🌹</div>
+      <div class="card-inner">
+        <div class="card-left">
+          <span class="card-index">✦</span>
+          <div class="card-text">
+            <div class="card-title">dois anos</div>
+          </div>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="nav-card" href="album.html">
+      <div class="card-accent"></div>
+      <div class="card-inner">
+        <div class="card-left">
+          <span class="card-index">I</span>
+          <div class="card-text">
+            <div class="card-title">álbum</div>
+          </div>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="nav-card" href="linha-do-tempo.html">
+      <div class="card-accent"></div>
+      <div class="card-inner">
+        <div class="card-left">
+          <span class="card-index">II</span>
+          <div class="card-text">
+            <div class="card-title">linha do tempo</div>
+          </div>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="nav-card" href="contador.html">
+      <div class="card-accent"></div>
+      <div class="card-inner">
+        <div class="card-left">
+          <span class="card-index">III</span>
+          <div class="card-text">
+            <div class="card-title">contador</div>
+          </div>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+
+
+  </div>
+
+  <footer class="footer">
+    <span>feito com amor</span>✦<span>desde 29 · 03 · 2024</span>
+  </footer>
+
+</div>
+
 <script>
-  if(sessionStorage.getItem('autenticado') !== 'true'){
-    window.location.href = 'index.html';
+// ── AUTH CHECK (comentado para testes — descomentar antes de publicar) ──
+
+if (sessionStorage.getItem('autenticado') !== 'true') {
+  window.location.href = 'index.html';
+}
+
+
+// ── PARALLAX + PARTÍCULAS ────────────────────────────────────────
+const pl1 = document.getElementById('pl1');
+const pl2 = document.getElementById('pl2');
+const pl3 = document.getElementById('pl3');
+const pl4 = document.getElementById('pl4');
+const ctx4 = pl4.getContext('2d');
+let ticking = false;
+
+let particles = [];
+function resizeCanvas() {
+  pl4.width  = innerWidth;
+  pl4.height = innerHeight;
+  initParticles();
+}
+function initParticles() {
+  particles = Array.from({ length: 90 }, () => ({
+    x:     Math.random() * pl4.width,
+    y:     Math.random() * pl4.height,
+    r:     Math.random() * 1.2 + 0.2,
+    alpha: Math.random() * 0.1 + 0.02,
+    phase: Math.random() * Math.PI * 2,
+    speed: Math.random() * 0.003 + 0.0008,
+    vx:    (Math.random() - 0.5) * 0.08,
+    vy:    (Math.random() - 0.5) * 0.08,
+  }));
+}
+
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      pl1.style.transform = `translateY(${y * 0.08}px)`;
+      pl2.style.transform = `translateY(${y * 0.2}px)`;
+      pl3.style.transform = `translateY(${y * 0.38}px)`;
+      ticking = false;
+    });
+    ticking = true;
   }
+});
+
+function drawParticles() {
+  ctx4.clearRect(0, 0, pl4.width, pl4.height);
+  particles.forEach(p => {
+    p.phase += p.speed;
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < -5) p.x = pl4.width + 5;
+    if (p.x > pl4.width + 5) p.x = -5;
+    if (p.y < -5) p.y = pl4.height + 5;
+    if (p.y > pl4.height + 5) p.y = -5;
+    const a = p.alpha * 0.5 * (0.4 + 0.6 * Math.sin(p.phase));
+    ctx4.beginPath();
+    ctx4.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx4.fillStyle = `rgba(232,135,154,${a})`;
+    ctx4.fill();
+  });
+  requestAnimationFrame(drawParticles);
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+drawParticles();
+
+// ── SCROLL REVEAL BIDIRECIONAL ───────────────────────────────────
+// Aparece ao entrar vindo de baixo (descendo)
+// Some apenas quando sai por baixo ao subir o scroll
+// Ao descer de novo, NÃO some os cards que já ficaram para trás
+const cards = document.querySelectorAll('.nav-card');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const card  = entry.target;
+    const rect  = card.getBoundingClientRect();
+
+    if (entry.isIntersecting) {
+      card.classList.remove('hiding');
+      const idx = Array.from(cards).indexOf(card);
+      setTimeout(() => card.classList.add('visible'), idx * 60);
+    } else {
+      // Saiu da viewport
+      const exitedAbove = rect.bottom < 0; // card saiu por cima → scroll descendo além dele
+      const exitedBelow = rect.top > window.innerHeight; // card ainda não entrou ou voltou ao subir
+
+      if (exitedBelow && card.classList.contains('visible')) {
+        // Saiu por baixo = usuário subiu o scroll, card some
+        card.classList.remove('visible');
+        card.classList.add('hiding');
+        setTimeout(() => card.classList.remove('hiding'), 750);
+      }
+      // exitedAbove = usuário desceu além do card → mantém visível, não faz nada
+    }
+  });
+}, { threshold: 0.12 });
+
+cards.forEach(c => observer.observe(c));
 </script>
 
-<canvas class="bg" id="bg"></canvas>
-
-<!-- Menu -->
-<div class="scene" id="scene">
-  <canvas class="main" id="main"></canvas>
-  <div class="pulse-ring" id="pulse"></div>
-  <div class="center" id="center">
-    <h1>dois anos,<br/>Larissa ♡</h1>
-    <p class="hint" id="hint">toque para explorar ✦</p>
-  </div>
-</div>
-
-<!-- Player flutuante -->
-<div id="player">
-  <div style="display:flex;align-items:center;gap:0.5rem;">
-    <div id="player-controls">
-      <button class="player-btn" id="btn-prev" title="Anterior">⏮</button>
-      <button class="player-btn" id="btn-play" title="Pausar">⏸</button>
-      <button class="player-btn" id="btn-next" title="Próxima">⏭</button>
-      <span id="player-title">—</span>
-    </div>
-    <button id="player-toggle" title="Música">♪</button>
-  </div>
-  <div id="player-bar"><div id="player-progress"></div></div>
-</div>
-
-<audio id="audio"></audio>
-
+<!-- GSAP + jQuery para o carrossel 3D -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════
-// MÚSICA DE FUNDO
-// ═══════════════════════════════════════════════════════
-// Adicione os arquivos .mp3 na pasta musicas/ do repositório
-// e liste os nomes aqui:
-const PLAYLIST = [
-  // Exemplo: { title: 'Nome da Música', src: 'musicas/musica1.mp3' },
-  // { title: 'Nome da Música 2', src: 'musicas/musica2.mp3' },
-];
+// ── CARROSSEL 3D ─────────────────────────────────────────────────
+$(document).ready(function() {
+  var container3d = $('#contentContainer');
+  var carousel3d  = $('#carouselContainer');
+  var items3d     = $('.carouselItem');
+  var itemLength  = items3d.length;
 
-const audio      = document.getElementById('audio');
-const btnPlay    = document.getElementById('btn-play');
-const btnPrev    = document.getElementById('btn-prev');
-const btnNext    = document.getElementById('btn-next');
-const titleEl    = document.getElementById('player-title');
-const toggleBtn  = document.getElementById('player-toggle');
-const controls   = document.getElementById('player-controls');
-const bar        = document.getElementById('player-bar');
-const progress   = document.getElementById('player-progress');
+  var rY       = 360 / itemLength;
+  // Raio responsivo: menor em telas pequenas, maior no desktop
+  var baseRadius = Math.min(window.innerWidth * 0.18, 200);
+  var radius3d = Math.round(baseRadius / Math.tan(Math.PI / itemLength));
 
-let currentIdx = 0;
-let playerOpen = false;
-let isPlaying  = false;
+  TweenMax.set(container3d, { perspective: 800 });
+  TweenMax.set(carousel3d,  { z: -radius3d });
 
-function shuffleFirst(){
-  if(PLAYLIST.length === 0) return;
-  currentIdx = Math.floor(Math.random() * PLAYLIST.length);
-}
-
-function loadTrack(idx){
-  if(PLAYLIST.length === 0){ titleEl.textContent = '—'; return; }
-  currentIdx = (idx + PLAYLIST.length) % PLAYLIST.length;
-  audio.src  = PLAYLIST[currentIdx].src;
-  titleEl.textContent = PLAYLIST[currentIdx].title;
-  if(isPlaying){ audio.play().catch(()=>{}); }
-}
-
-function play(){
-  if(PLAYLIST.length === 0) return;
-  audio.play().then(()=>{
-    isPlaying = true;
-    btnPlay.textContent = '⏸';
-    toggleBtn.classList.add('playing');
-    bar.classList.add('show');
-  }).catch(()=>{});
-}
-
-function pause(){
-  audio.pause();
-  isPlaying = false;
-  btnPlay.textContent = '▶';
-  toggleBtn.classList.remove('playing');
-}
-
-btnPlay.addEventListener('click', ()=>{ isPlaying ? pause() : play(); });
-btnNext.addEventListener('click', ()=>{ loadTrack(currentIdx + 1); if(isPlaying) play(); });
-btnPrev.addEventListener('click', ()=>{ loadTrack(currentIdx - 1); if(isPlaying) play(); });
-audio.addEventListener('ended',  ()=>{ loadTrack(currentIdx + 1); play(); });
-
-audio.addEventListener('timeupdate', ()=>{
-  if(!audio.duration) return;
-  progress.style.width = (audio.currentTime / audio.duration * 100) + '%';
-});
-
-toggleBtn.addEventListener('click', ()=>{
-  playerOpen = !playerOpen;
-  controls.classList.toggle('open', playerOpen);
-  // Toca automaticamente na primeira abertura
-  if(playerOpen && !isPlaying && PLAYLIST.length > 0){
-    if(!audio.src){ shuffleFirst(); loadTrack(currentIdx); }
-    play();
-  }
-});
-
-// Inicia com música aleatória (mas aguarda interação do usuário)
-if(PLAYLIST.length > 0){
-  shuffleFirst();
-  loadTrack(currentIdx);
-  // Tenta autoplay — funciona em alguns browsers após interação prévia (login)
-  audio.play().then(()=>{
-    isPlaying=true;
-    btnPlay.textContent='⏸';
-    toggleBtn.classList.add('playing');
-    bar.classList.add('show');
-  }).catch(()=>{
-    // Browser bloqueou — aguarda o usuário clicar no player
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// MENU — ESPIRAL ORBITAL
-// ═══════════════════════════════════════════════════════
-const items=[
-  {label:'álbum',          href:'album.html'},
-  {label:'linha do tempo', href:'linha-do-tempo.html'},
-  {label:'carta',          href:'carta.html'},
-  {label:'galeria',        href:'galeria.html'},
-  {label:'segredo',        href:'segredo.html'},
-];
-
-// ── BG ─────────────────────────────────────────────────
-const bgCv=document.getElementById('bg'),bgCtx=bgCv.getContext('2d');
-let bgS=[];
-function resizeBg(){bgCv.width=innerWidth;bgCv.height=innerHeight;}
-function mkBg(){return{x:Math.random()*bgCv.width,y:Math.random()*bgCv.height,r:Math.random()*1.1+0.1,a:Math.random()*0.4+0.05,phase:Math.random()*Math.PI*2,speed:Math.random()*0.003+0.001};}
-function initBg(){bgS=Array.from({length:220},mkBg);}
-function drawBg(){bgCtx.clearRect(0,0,bgCv.width,bgCv.height);bgS.forEach(s=>{s.phase+=s.speed;const a=s.a*(0.5+0.5*Math.sin(s.phase));bgCtx.beginPath();bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);bgCtx.fillStyle=`rgba(255,215,235,${a})`;bgCtx.fill();});requestAnimationFrame(drawBg);}
-window.addEventListener('resize',()=>{resizeBg();initBg();setup();});
-resizeBg();initBg();drawBg();
-
-// ── ÓRBITA ─────────────────────────────────────────────
-const scene=document.getElementById('scene');
-const cv=document.getElementById('main');
-const ctx=cv.getContext('2d');
-const N=items.length;
-
-const ORBIT_SPEED=(Math.PI*2)/(70000/16.67); // uma volta a cada 70s
-const SPIRAL_DUR=1600;
-const SPIRAL_TURNS=1.6;
-
-let W,H,CX,CY,R;
-let labelEls=[];
-let revealed=false;
-let revealMs=0;
-
-const finalAngles=items.map((_,i)=>(i/N)*Math.PI*2 - Math.PI/2);
-
-const stars=items.map((item,i)=>({
-  item,
-  startAngle: finalAngles[i] - Math.PI*2*SPIRAL_TURNS,
-  finalAngle: finalAngles[i],
-  angle:0, radius:0,
-  phase:'idle',
-  glowPulse:Math.random()*Math.PI*2,
-  glowSpeed:0.012+Math.random()*0.008,
-}));
-
-const trails=items.map(()=>[]);
-
-function setup(){
-  W=cv.width=scene.offsetWidth;
-  H=cv.height=scene.offsetHeight;
-  CX=W/2; CY=H/2; R=W*0.39;
-  labelEls.forEach(e=>e.remove()); labelEls=[];
-  items.forEach((item,i)=>{
-    const el=document.createElement('div');
-    el.className='star-label';
-    el.textContent=item.label;
-    el.addEventListener('click',()=>{ if(revealed) location.href=item.href; });
-    scene.appendChild(el);
-    labelEls.push(el);
-  });
-}
-
-function startReveal(){
-  revealed=true;
-  revealMs=performance.now();
-  document.getElementById('hint').classList.add('gone');
-  const pulse=document.getElementById('pulse');
-  pulse.classList.remove('go'); void pulse.offsetWidth; pulse.classList.add('go');
-  stars.forEach((s,i)=>{
-    s.phase='spiral';
-    s.angle=s.startAngle;
-    s.radius=0;
-    trails[i]=[];
-  });
-}
-
-function easeOutQuart(t){ return 1-Math.pow(1-t,4); }
-
-let ringAlpha=0, lineAlpha=0;
-
-function frame(now){
-  ctx.clearRect(0,0,W,H);
-
-  if(revealed){
-    const elapsed=now-revealMs;
-    if(elapsed>SPIRAL_DUR){
-      ringAlpha=Math.min((elapsed-SPIRAL_DUR)/1200,1)*0.08;
-      lineAlpha=Math.min((elapsed-SPIRAL_DUR)/1600,1)*0.06;
-    }
-  }
-
-  // Anel orbital
-  if(ringAlpha>0){
-    ctx.save();
-    ctx.strokeStyle=`rgba(232,135,154,${ringAlpha})`;
-    ctx.lineWidth=1; ctx.setLineDash([2,12]);
-    ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.stroke();
-    ctx.setLineDash([]); ctx.restore();
-  }
-
-  // Linhas de constelação
-  if(lineAlpha>0){
-    ctx.save();
-    ctx.strokeStyle=`rgba(232,135,154,${lineAlpha})`;
-    ctx.lineWidth=1; ctx.setLineDash([3,9]);
-    stars.forEach((s,i)=>{
-      if(s.phase!=='orbit') return;
-      const ns=stars[(i+1)%N];
-      if(ns.phase!=='orbit') return;
-      ctx.beginPath();
-      ctx.moveTo(CX+Math.cos(s.angle)*R, CY+Math.sin(s.angle)*R);
-      ctx.lineTo(CX+Math.cos(ns.angle)*R, CY+Math.sin(ns.angle)*R);
-      ctx.stroke();
+  for (var i = 0; i < itemLength; i++) {
+    TweenMax.set(items3d.eq(i), {
+      rotationY:       rY * i,
+      z:               radius3d,
+      transformOrigin: '50% 50% ' + (-radius3d) + 'px',
+      autoAlpha:       1
     });
-    ctx.setLineDash([]); ctx.restore();
   }
 
-  stars.forEach((s,i)=>{
-    if(s.phase==='idle') return;
+  var addX         = 0;
+  var autoSpeed    = 0.12;
+  var currentSpeed = autoSpeed;
+  var targetSpeed  = autoSpeed;
 
-    let x,y,alpha,coreR;
+  var isDragging = false;
+  var dragStartX = 0;
+  var dragLastX  = 0;
+  var dragVelX   = 0;
+  var mouseY     = 0;
+  var isHovering = false;
 
-    if(s.phase==='spiral'){
-      const elapsed=now-revealMs;
-      const t=Math.min(elapsed/SPIRAL_DUR,1);
-      const e=easeOutQuart(t);
-      s.angle=s.startAngle+(s.finalAngle-s.startAngle)*e;
-      s.radius=e*R;
-      alpha=Math.min(t*3,1);
-      coreR=3+e*3;
-      x=CX+Math.cos(s.angle)*s.radius;
-      y=CY+Math.sin(s.angle)*s.radius;
-      trails[i].push({x,y});
-      if(trails[i].length>45) trails[i].shift();
-      if(t>=1){ s.phase='orbit'; s.angle=s.finalAngle; trails[i]=[]; }
-    }
-    else if(s.phase==='orbit'){
-      s.angle+=ORBIT_SPEED;
-      s.glowPulse+=s.glowSpeed;
-      x=CX+Math.cos(s.angle)*R;
-      y=CY+Math.sin(s.angle)*R;
-      alpha=1; coreR=5.5;
-    }
+  // Zona de hover: largura = diâmetro horizontal, altura = raio + meia-altura da foto × 2
+  var carouselWrap = document.querySelector('.carousel-3d-wrap');
+  var photoW    = Math.min(window.innerWidth * 0.28, 320);
+  var photoH    = photoW / 1.1;
+  var diameter  = (radius3d + photoW / 2) * 2;
+  var hoverW    = Math.min(diameter, window.innerWidth * 0.96);
+  var hoverH    = radius3d * 2 + photoH;
 
-    if(x==null) return;
+  // Ajusta largura do wrap ao diâmetro real do carrossel
+  carouselWrap.style.width = hoverW + 'px';
 
-    // Trilha
-    if(trails[i].length>1){
-      for(let j=1;j<trails[i].length;j++){
-        const ta=j/trails[i].length;
-        const p=trails[i][j-1],q=trails[i][j];
-        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
-        ctx.strokeStyle=`rgba(192,57,90,${ta*0.4})`;
-        ctx.lineWidth=1.5*(1-ta)+0.3;
-        ctx.stroke();
-      }
-    }
+  var hoverZone = document.createElement('div');
+  hoverZone.style.cssText = [
+    'position:absolute',
+    'left:50%',
+    'top:50%',
+    'width:'  + hoverW + 'px',
+    'height:' + hoverH + 'px',
+    'transform:translate(-50%,-50%)',
+    'border-radius:50%',
+    'z-index:20',
+    'cursor:grab',
+    'pointer-events:auto',
+  ].join(';');
+  carouselWrap.appendChild(hoverZone);
 
-    // Glow
-    const gA=(s.phase==='orbit')?0.28+0.12*Math.sin(s.glowPulse):alpha*0.32;
-    const grd=ctx.createRadialGradient(x,y,0,x,y,coreR*6);
-    grd.addColorStop(0,`rgba(192,57,90,${gA})`);
-    grd.addColorStop(1,'rgba(192,57,90,0)');
-    ctx.beginPath();ctx.arc(x,y,coreR*6,0,Math.PI*2);
-    ctx.fillStyle=grd;ctx.fill();
-
-    // Núcleo
-    const cr=ctx.createRadialGradient(x,y,0,x,y,coreR);
-    cr.addColorStop(0,`rgba(255,245,250,${alpha})`);
-    cr.addColorStop(0.4,`rgba(232,135,154,${alpha})`);
-    cr.addColorStop(1,`rgba(192,57,90,${alpha*0.4})`);
-    ctx.beginPath();ctx.arc(x,y,coreR,0,Math.PI*2);
-    ctx.fillStyle=cr;ctx.fill();
-
-    // Cruz 4 pontas
-    if(s.phase==='orbit'){
-      ctx.save();ctx.translate(x,y);
-      ctx.globalAlpha=0.35+0.18*Math.sin(s.glowPulse);
-      ctx.strokeStyle='rgba(255,230,240,0.85)';ctx.lineWidth=0.8;
-      const len=coreR*2.8;
-      ctx.beginPath();ctx.moveTo(0,-len);ctx.lineTo(0,len);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(-len,0);ctx.lineTo(len,0);ctx.stroke();
-      ctx.restore();
-    }
-
-    // Label
-    if(labelEls[i]){
-      const el=labelEls[i];
-      el.style.left=`${x}px`;
-      el.style.top=`${y+coreR+13}px`;
-      if(s.phase==='orbit' && !el.classList.contains('show')) el.classList.add('show');
+  // ── Hover: pausa rotação automática ──
+  hoverZone.addEventListener('mouseenter', function() {
+    isHovering  = true;
+    targetSpeed = 0;
+    hoverZone.style.cursor = 'grab';
+  });
+  hoverZone.addEventListener('mouseleave', function() {
+    if (!isDragging) {
+      isHovering  = false;
+      targetSpeed = autoSpeed;
+      mouseY      = 0;
     }
   });
 
-  requestAnimationFrame(frame);
-}
+  // ── Drag com mouse ──
+  hoverZone.addEventListener('mousedown', function(e) {
+    isDragging  = true;
+    dragStartX  = e.clientX;
+    dragLastX   = e.clientX;
+    dragVelX    = 0;
+    targetSpeed = 0;
+    hoverZone.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
 
-document.getElementById('center').addEventListener('click',()=>{ if(!revealed) startReveal(); });
-setup();
-requestAnimationFrame(frame);
+  window.addEventListener('mousemove', function(e) {
+    if (isDragging) {
+      var dx   = e.clientX - dragLastX;
+      dragVelX = dx * 0.08;
+      addX    += dragVelX;
+      dragLastX = e.clientX;
+    }
+  });
+
+  window.addEventListener('mouseup', function() {
+    if (isDragging) {
+      isDragging = false;
+      hoverZone.style.cursor = 'grab';
+      if (!isHovering) targetSpeed = autoSpeed;
+    }
+  });
+
+  // ── Touch ──
+  hoverZone.addEventListener('touchstart', function(e) {
+    isDragging  = true;
+    dragStartX  = e.touches[0].clientX;
+    dragLastX   = e.touches[0].clientX;
+    targetSpeed = 0;
+  });
+  hoverZone.addEventListener('touchmove', function(e) {
+    var dx   = e.touches[0].clientX - dragLastX;
+    dragVelX = dx * 0.08;
+    addX    += dragVelX;
+    dragLastX = e.touches[0].clientX;
+  });
+  hoverZone.addEventListener('touchend', function() {
+    isDragging  = false;
+    targetSpeed = autoSpeed;
+  });
+
+  // ── Loop ──
+  setInterval(function() {
+    // Suaviza a transição de velocidade
+    currentSpeed += (targetSpeed - currentSpeed) * 0.06;
+
+    if (!isDragging) {
+      addX += currentSpeed;
+    }
+
+    TweenMax.to(carousel3d, 1, {
+      rotationY: addX,
+      rotationX: mouseY,
+      ease:      Quint.easeOut
+    });
+  }, 1000 / 60);
+});
 </script>
 </body>
 </html>
