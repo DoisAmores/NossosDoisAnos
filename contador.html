@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contador — Nós Dois ♡</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=EB+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--rose-mid:#c0395a;--rose-light:#e8879a;--rose-pale:#f5c6d0;--gold:#c9955c;--gold-light:#e8c49a;--bg:#0a0108;--card-bg:rgba(255,255,255,0.045);--card-bdr:rgba(232,135,154,0.22);--text:#fdf0f3;--muted:rgba(253,240,243,0.4);--divider:rgba(232,135,154,0.15)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'EB Garamond',serif;overflow-x:hidden}
+    .parallax-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .p-layer{position:absolute;inset:-40% 0;will-change:transform}
+    .p-layer-1{background:radial-gradient(ellipse 80% 60% at 10% 20%,rgba(100,5,32,.7) 0%,transparent 55%),radial-gradient(ellipse 75% 55% at 90% 80%,rgba(80,3,25,.65) 0%,transparent 55%),radial-gradient(ellipse 60% 45% at 50% 55%,rgba(45,2,15,.5) 0%,transparent 60%)}
+    .p-layer-2{background:radial-gradient(ellipse 65% 50% at 85% 10%,rgba(140,20,55,.45) 0%,transparent 55%),radial-gradient(ellipse 60% 45% at 15% 90%,rgba(115,12,42,.4) 0%,transparent 55%)}
+    .p-layer-3{background:radial-gradient(ellipse 50% 40% at 48% 42%,rgba(180,70,100,.12) 0%,transparent 55%),radial-gradient(ellipse 35% 28% at 25% 25%,rgba(200,100,125,.09) 0%,transparent 50%)}
+    #pl4{inset:0;width:100%;height:100%}
+    .content{position:relative;z-index:10}
+    .nav-back{position:fixed;top:1.5rem;left:1.5rem;z-index:100;display:flex;align-items:center;gap:.5rem;color:rgba(232,135,154,.4);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:color .3s;background:rgba(10,1,8,.5);padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(232,135,154,.12);backdrop-filter:blur(10px)}
+    .nav-back:hover{color:var(--rose-light);border-color:rgba(232,135,154,.3)}
+    .nav-back::before{content:'← '}
+    .ornament{display:flex;align-items:center;gap:.85rem;justify-content:center}
+    .orn-line{width:70px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,135,154,.45))}
+    .orn-line.r{background:linear-gradient(90deg,rgba(232,135,154,.45),transparent)}
+    .orn-rose{font-size:1.4rem;animation:sway 4s ease-in-out infinite}
+    @keyframes sway{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.1)}}
+    .section-eyebrow{font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(232,135,154,.4);text-align:center;margin-bottom:.5rem}
+    .section-title{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(1.8rem,4vw,2.8rem);text-align:center;background:linear-gradient(135deg,#fce7f3 0%,var(--rose-light) 50%,rgba(192,57,90,.9) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .section-divider{width:100%;max-width:500px;height:1px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(232,135,154,.2),transparent)}
+
+    /* CONTADOR */
+    .hero-counter{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.2rem;padding:6rem 1.5rem 5rem;text-align:center}
+    .hero-title{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(2.4rem,7vw,5rem);line-height:1.1;background:linear-gradient(160deg,#fce7f3 0%,var(--rose-light) 50%,rgba(192,57,90,.9) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .counter-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(.5rem,1.5vw,1rem);width:100%;max-width:920px}
+    .cnt-card{background:var(--card-bg);border:1px solid var(--card-bdr);border-radius:20px;padding:clamp(1.2rem,3vw,2rem) clamp(.8rem,2vw,1.5rem) clamp(.9rem,2vw,1.3rem);backdrop-filter:blur(14px);position:relative;overflow:hidden;min-width:clamp(88px,15vw,132px);flex:1 1 clamp(88px,15vw,132px);max-width:142px;transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
+    .cnt-card:hover{transform:translateY(-5px);border-color:rgba(232,135,154,.5);box-shadow:0 12px 40px rgba(192,57,90,.2)}
+    .cnt-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--rose-light),transparent)}
+    .cnt-card.gold{border-color:rgba(201,149,92,.38);background:rgba(201,149,92,.07)}
+    .cnt-card.gold::before{background:linear-gradient(90deg,transparent,var(--gold-light),transparent)}
+    .cnt-num{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5.5vw,3.8rem);font-weight:700;line-height:1;display:block;text-shadow:0 0 24px rgba(224,135,154,.5),0 0 60px rgba(192,57,90,.22);min-height:1.15em;min-width:2ch}
+    .cnt-card.gold .cnt-num{background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:none;filter:drop-shadow(0 0 16px rgba(201,149,92,.4))}
+    .cnt-num.flip{animation:flipIn .36s cubic-bezier(.4,0,.2,1)}
+    @keyframes flipIn{0%{transform:rotateX(90deg) scale(.88);opacity:0}100%{transform:rotateX(0) scale(1);opacity:1}}
+    .cnt-lbl{display:block;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,198,208,.55);margin-top:.55rem}
+    .cnt-card.gold .cnt-lbl{color:rgba(232,196,154,.5)}
+    .cnt-sep{width:1px;height:50px;background:linear-gradient(to bottom,transparent,rgba(232,135,154,.25),transparent);align-self:center;flex-shrink:0}
+    .since-tag{font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(232,135,154,.3)}
+
+    /* STATS */
+    .stats-section{padding:6rem 1.5rem;max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:3rem;align-items:center}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;width:100%}
+    .stat-card{background:var(--card-bg);border:1px solid var(--card-bdr);border-radius:18px;padding:1.6rem 1.4rem 1.3rem;backdrop-filter:blur(10px);position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease}
+    .stat-card:hover{transform:translateY(-4px);box-shadow:0 10px 35px rgba(192,57,90,.15)}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(232,135,154,.3),transparent)}
+    .stat-icon{font-size:1.6rem;margin-bottom:.8rem;display:block}
+    .stat-val{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;display:block;line-height:1;text-shadow:0 0 20px rgba(224,135,154,.35)}
+    .stat-label{display:block;margin-top:.4rem;font-size:.8rem;letter-spacing:.08em;color:var(--muted);font-style:italic;line-height:1.5}
+    .stat-sub{display:block;margin-top:.3rem;font-size:.65rem;letter-spacing:.1em;color:rgba(232,135,154,.28);text-transform:uppercase}
+    .totals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;width:100%}
+    .total-card{background:rgba(192,57,90,.05);border:1px solid rgba(192,57,90,.18);border-radius:14px;padding:1.2rem 1.6rem;display:flex;align-items:center;gap:1rem}
+    .total-icon{font-size:1.4rem;flex-shrink:0}
+    .total-num{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,2.5vw,1.9rem);font-weight:700;color:var(--rose-pale);line-height:1;display:block}
+    .total-label{font-size:.75rem;letter-spacing:.1em;color:var(--muted);font-style:italic;display:block;margin-top:.15rem}
+    .total-written{font-size:.63rem;color:rgba(245,198,208,.28);letter-spacing:.05em;display:block;margin-top:.1rem;font-style:italic}
+
+    /* % DE CASAIS */
+    .percent-section{padding:6rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:3rem;text-align:center}
+    .trophy-wrap{font-size:3rem;animation:trophyFloat 3s ease-in-out infinite}
+    @keyframes trophyFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+    .percent-tag{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(232,135,154,.38)}
+    .percent-display{display:flex;align-items:baseline;gap:.1rem;justify-content:center}
+    .percent-num{font-family:'Playfair Display',serif;font-size:clamp(5rem,18vw,11rem);font-weight:700;line-height:1;background:linear-gradient(135deg,#fce7f3 0%,var(--rose-light) 40%,var(--rose-mid) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 30px rgba(192,57,90,.35));min-width:3ch;text-align:center}
+    .percent-sym{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:400;color:rgba(232,135,154,.55);align-self:flex-start;padding-top:.9rem}
+    .percent-text{font-size:clamp(1rem,2.2vw,1.25rem);font-style:italic;color:var(--muted);max-width:420px;line-height:1.7}
+    .percent-text strong{color:var(--rose-pale);font-style:normal}
+    .percent-bar-wrap{width:min(380px,88vw);height:4px;background:rgba(255,255,255,.06);border-radius:99px;position:relative}
+    .percent-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--rose-mid),var(--rose-light));box-shadow:0 0 12px rgba(232,135,154,.5);transition:width 3.5s cubic-bezier(.22,.61,.36,1);position:relative}
+    .percent-bar::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:var(--rose-light);box-shadow:0 0 10px rgba(232,135,154,.8)}
+    .percent-note{font-size:.65rem;letter-spacing:.18em;color:rgba(232,135,154,.25);text-transform:uppercase}
+
+    /* BODAS */
+    .bodas-section{padding:6rem 1.5rem 8rem;max-width:680px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:3rem}
+    .bodas-list{width:100%;display:flex;flex-direction:column;position:relative}
+    .bodas-list::before{content:'';position:absolute;left:clamp(34px,7vw,46px);top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent 0%,rgba(232,135,154,.2) 5%,rgba(232,135,154,.2) 95%,transparent 100%)}
+    .boda-item{display:flex;align-items:center;gap:clamp(.9rem,2.5vw,1.6rem);padding:clamp(.8rem,1.8vw,1.1rem) 0;position:relative;opacity:0;transform:translateX(-16px);transition:opacity .55s ease,transform .55s ease}
+    .boda-item.revealed{opacity:1;transform:translateX(0)}
+    .boda-img-wrap{flex-shrink:0;width:clamp(52px,9vw,66px);height:clamp(52px,9vw,66px);border-radius:50%;overflow:hidden;border:2px solid rgba(232,135,154,.18);background:rgba(255,255,255,.035);position:relative;z-index:2;display:flex;align-items:center;justify-content:center;transition:border-color .3s,box-shadow .3s}
+    .boda-img-wrap img{width:72%;height:72%;object-fit:contain}
+    .boda-item.done .boda-img-wrap{border-color:rgba(201,149,92,.5);box-shadow:0 0 16px rgba(201,149,92,.25);background:rgba(201,149,92,.08)}
+    .boda-item.current .boda-img-wrap{border-color:rgba(232,135,154,.75);box-shadow:0 0 20px rgba(232,135,154,.4);animation:pulseBoda 2.5s ease-in-out infinite}
+    @keyframes pulseBoda{0%,100%{box-shadow:0 0 16px rgba(232,135,154,.3)}50%{box-shadow:0 0 28px rgba(232,135,154,.7)}}
+    .boda-content{flex:1;min-width:0}
+    .boda-header{display:flex;align-items:baseline;gap:.65rem;flex-wrap:wrap}
+    .boda-years{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(232,135,154,.28);flex-shrink:0}
+    .boda-name{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.05rem,2.4vw,1.35rem);color:var(--text)}
+    .boda-item.done .boda-name{color:var(--gold-light)}
+    .boda-item.current .boda-name{color:var(--rose-pale)}
+    .boda-status{margin-top:.18rem;font-size:clamp(.76rem,1.5vw,.86rem);font-style:italic;display:block}
+    .boda-status.done-text{color:rgba(201,149,92,.6)}
+    .boda-status.current-text{color:var(--rose-light)}
+    .boda-status.future-text{color:rgba(245,198,208,.32)}
+    .boda-tick{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.03);border:1px solid rgba(232,135,154,.12);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:rgba(232,135,154,.2)}
+    .boda-item.done .boda-tick{background:rgba(201,149,92,.14);border-color:rgba(201,149,92,.4);color:var(--gold-light)}
+    .boda-item.current .boda-tick{background:rgba(232,135,154,.14);border-color:rgba(232,135,154,.5);color:var(--rose-light);animation:pulseTick 2.5s ease-in-out infinite}
+    @keyframes pulseTick{0%,100%{opacity:.7}50%{opacity:1}}
+    .footer{text-align:center;padding:4rem 2rem 6rem;color:rgba(232,135,154,.2);font-size:.72rem;letter-spacing:.2em}
+    .footer span{display:inline-block;margin:0 .5rem;font-style:italic}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:480px){.cnt-sep{display:none}.cnt-card{min-width:calc(33% - .5rem);max-width:none;border-radius:14px}}
+  </style>
+</head>
+<body>
+
+<div class="parallax-wrap">
+  <div class="p-layer p-layer-1" id="pl1"></div>
+  <div class="p-layer p-layer-2" id="pl2"></div>
+  <div class="p-layer p-layer-3" id="pl3"></div>
+  <canvas class="p-layer" id="pl4"></canvas>
+</div>
+
+<a class="nav-back" href="site.html">nossa história</a>
+
+<div class="content">
+
+  <section class="hero-counter">
+    <div class="ornament" style="animation:fadeDown 1.2s ease both">
+      <div class="orn-line"></div><span class="orn-rose">🌹</span><div class="orn-line r"></div>
+    </div>
+    <p class="section-eyebrow" style="animation:fadeDown 1.3s ease both .1s">nosso tempo juntos</p>
+    <h1 class="hero-title" style="animation:fadeUp 1.4s ease both .15s">cada segundo importa</h1>
+    <div class="counter-grid" style="animation:fadeUp 1.6s ease both .3s">
+      <div class="cnt-card gold"><span class="cnt-num" id="cnt-anos">--</span><span class="cnt-lbl">anos</span></div>
+      <div class="cnt-card"><span class="cnt-num" id="cnt-meses">--</span><span class="cnt-lbl">meses</span></div>
+      <div class="cnt-card"><span class="cnt-num" id="cnt-dias">--</span><span class="cnt-lbl">dias</span></div>
+      <div class="cnt-sep"></div>
+      <div class="cnt-card"><span class="cnt-num" id="cnt-horas">--</span><span class="cnt-lbl">horas</span></div>
+      <div class="cnt-card"><span class="cnt-num" id="cnt-minutos">--</span><span class="cnt-lbl">minutos</span></div>
+      <div class="cnt-card"><span class="cnt-num" id="cnt-segundos">--</span><span class="cnt-lbl">segundos</span></div>
+    </div>
+    <p class="since-tag" style="animation:fadeUp 1.6s ease both .5s">desde 29 · 03 · 2024</p>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section class="stats-section">
+    <div><p class="section-eyebrow">em números</p><h2 class="section-title">curiosidades e estatísticas</h2></div>
+    <div class="stats-grid">
+      <div class="stat-card"><span class="stat-icon">🌕</span><span class="stat-val" id="stat-luas">--</span><span class="stat-label">luas cheias juntos</span><span class="stat-sub">uma lua a cada 29.5 dias</span></div>
+      <div class="stat-card"><span class="stat-icon">🎄</span><span class="stat-val" id="stat-natais">--</span><span class="stat-label">natais compartilhados</span><span class="stat-sub">25 de dezembro</span></div>
+      <div class="stat-card"><span class="stat-icon">💕</span><span class="stat-val" id="stat-namorados">--</span><span class="stat-label">dias dos namorados</span><span class="stat-sub">12 de junho</span></div>
+      <div class="stat-card"><span class="stat-icon">☕</span><span class="stat-val" id="stat-fds">--</span><span class="stat-label">finais de semana</span><span class="stat-sub">sábados e domingos</span></div>
+    </div>
+    <div class="totals-grid">
+      <div class="total-card"><span class="total-icon">⏰</span><div><span class="total-num" id="tot-horas">--</span><span class="total-label">horas no total</span><span class="total-written" id="tot-horas-ext"></span></div></div>
+      <div class="total-card"><span class="total-icon">⏱️</span><div><span class="total-num" id="tot-minutos">--</span><span class="total-label">minutos no total</span><span class="total-written" id="tot-min-ext"></span></div></div>
+      <div class="total-card"><span class="total-icon">⚡</span><div><span class="total-num" id="tot-segundos">--</span><span class="total-label">segundos no total</span><span class="total-written" id="tot-seg-ext"></span></div></div>
+      <div class="total-card"><span class="total-icon">💗</span><div><span class="total-num" id="tot-bat">--</span><span class="total-label">batidas do coração juntos</span><span class="total-written" id="tot-bat-ext"></span></div></div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section class="percent-section">
+    <div><p class="section-eyebrow">comparado com o mundo</p><h2 class="section-title">entre os mais duradouros</h2></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:1.4rem">
+      <div class="trophy-wrap">🏆</div>
+      <p class="percent-tag">estamos entre os</p>
+      <div class="percent-display">
+        <span class="percent-num" id="pct-num">100</span>
+        <span class="percent-sym">%</span>
+      </div>
+      <p class="percent-text">dos casais com <strong>mais tempo juntos</strong></p>
+      <div class="percent-bar-wrap"><div class="percent-bar" id="pct-bar" style="width:0%"></div></div>
+      <p class="percent-note" id="pct-note">calculando…</p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section class="bodas-section">
+    <div><p class="section-eyebrow">nosso tempo em</p><h2 class="section-title">bodas</h2></div>
+    <div class="bodas-list" id="bodas-list"></div>
+  </section>
+
+  <footer class="footer"><span>feito com amor</span>✦<span>desde 29 · 03 · 2024</span></footer>
+</div>
+
+<script>
+// AUTH CHECK (comentado — descomentar antes de publicar)
+/*
+if (sessionStorage.getItem('autenticado') !== 'true') {
+  window.location.href = 'index.html';
+}
+*/
+
+const START = new Date("2024-03-29T00:00:00");
+
+// ── Parallax + partículas ──────────────────
+const pl1=document.getElementById('pl1'),pl2=document.getElementById('pl2'),pl3=document.getElementById('pl3');
+const pl4=document.getElementById('pl4'),ctx4=pl4.getContext('2d');
+let ticking=false,particles=[];
+function resizeCanvas(){pl4.width=innerWidth;pl4.height=innerHeight;initParticles()}
+function initParticles(){particles=Array.from({length:90},()=>({x:Math.random()*pl4.width,y:Math.random()*pl4.height,r:Math.random()*1.2+.2,alpha:Math.random()*.09+.02,phase:Math.random()*Math.PI*2,speed:Math.random()*.003+.001,vx:(Math.random()-.5)*.07,vy:(Math.random()-.5)*.07}))}
+window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{const y=window.scrollY;pl1.style.transform=`translateY(${y*.08}px)`;pl2.style.transform=`translateY(${y*.2}px)`;pl3.style.transform=`translateY(${y*.38}px)`;ticking=false});ticking=true}});
+function drawParticles(){ctx4.clearRect(0,0,pl4.width,pl4.height);particles.forEach(p=>{p.phase+=p.speed;p.x+=p.vx;p.y+=p.vy;if(p.x<-5)p.x=pl4.width+5;if(p.x>pl4.width+5)p.x=-5;if(p.y<-5)p.y=pl4.height+5;if(p.y>pl4.height+5)p.y=-5;const a=p.alpha*(0.4+.6*Math.sin(p.phase));ctx4.beginPath();ctx4.arc(p.x,p.y,p.r,0,Math.PI*2);ctx4.fillStyle=`rgba(232,135,154,${a})`;ctx4.fill()});requestAnimationFrame(drawParticles)}
+window.addEventListener('resize',resizeCanvas);resizeCanvas();drawParticles();
+
+// ── Cálculos ───────────────────────────────
+function pad(n){return String(n).padStart(2,'0')}
+
+function calcDiff(){
+  const now=new Date();
+  let y=now.getFullYear()-START.getFullYear(),mo=now.getMonth()-START.getMonth(),d=now.getDate()-START.getDate();
+  const ms=now-START,h=Math.floor((ms%86400000)/3600000),mi=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
+  if(d<0){mo--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate()}
+  if(mo<0){y--;mo+=12}
+  return{y,mo,d,h,mi,s}
+}
+
+function calcTotals(){
+  const ms=Date.now()-START.getTime();
+  return{totalDays:Math.floor(ms/86400000),totalHours:Math.floor(ms/3600000),totalMinutes:Math.floor(ms/60000),totalSeconds:Math.floor(ms/1000)}
+}
+
+function calcStats(totalDays){
+  const luasCheias=Math.floor(totalDays/29.53);
+  const now=new Date();let natais=0,namorados=0;
+  for(let yr=START.getFullYear();yr<=now.getFullYear();yr++){
+    if(new Date(yr,11,25)>=START&&new Date(yr,11,25)<=now)natais++;
+    if(new Date(yr,5,12)>=START&&new Date(yr,5,12)<=now)namorados++;
+  }
+  const firstDay=START.getDay();let fds=0;
+  for(let dd=0;dd<=totalDays;dd++){const dow=(firstDay+dd)%7;if(dow===0||dow===6)fds++}
+  return{luasCheias,natais,namorados,fds}
+}
+
+const ONES=['','Um','Dois','Três','Quatro','Cinco','Seis','Sete','Oito','Nove','Dez','Onze','Doze','Treze','Catorze','Quinze','Dezesseis','Dezessete','Dezoito','Dezenove','Vinte','Vinte e Um','Vinte e Dois','Vinte e Três','Vinte e Quatro','Vinte e Cinco','Vinte e Seis','Vinte e Sete','Vinte e Oito','Vinte e Nove','Trinta','Trinta e Um','Trinta e Dois','Trinta e Três','Trinta e Quatro','Trinta e Cinco','Trinta e Seis','Trinta e Sete','Trinta e Oito','Trinta e Nove','Quarenta','Quarenta e Um','Quarenta e Dois','Quarenta e Três','Quarenta e Quatro','Quarenta e Cinco','Quarenta e Seis','Quarenta e Sete','Quarenta e Oito','Quarenta e Nove','Cinquenta','Cinquenta e Um','Cinquenta e Dois','Cinquenta e Três','Cinquenta e Quatro','Cinquenta e Cinco','Cinquenta e Seis','Cinquenta e Sete','Cinquenta e Oito','Cinquenta e Nove','Sessenta','Sessenta e Um','Sessenta e Dois','Sessenta e Três'];
+function numExt(n){
+  if(!n||n<=0)return'';
+  const mi=Math.floor(n/1000000),th=Math.floor((n%1000000)/1000),parts=[];
+  if(mi>0)parts.push((mi<ONES.length?ONES[mi]:mi)+(mi===1?' Milhão':' Milhões'));
+  if(th>0)parts.push((th<ONES.length?ONES[th]:th)+(th===1?' Mil':' Mil'));
+  return parts.join(' e ')
+}
+
+// ── % de casais ────────────────────────────
+const PCT=[[0,100],[30,75],[90,60],[180,45],[365,30],[730,25],[1095,22],[1825,20],[3650,15],[7300,10],[10950,7],[18250,3]];
+function getPct(days){
+  if(days<=0)return 100;if(days>=18250)return 3;
+  for(let i=0;i<PCT.length-1;i++){const[d0,p0]=PCT[i],[d1,p1]=PCT[i+1];if(days>=d0&&days<=d1)return Math.round(p0+(days-d0)/(d1-d0)*(p1-p0))}
+  return 3
+}
+
+// ── Bodas ──────────────────────────────────
+const BODAS=[
+  {anos:1,nome:'Papel',img:'papel'},{anos:2,nome:'Algodão',img:'algodao'},
+  {anos:3,nome:'Trigo',img:'trigo'},{anos:4,nome:'Flores',img:'flor'},
+  {anos:5,nome:'Madeira',img:'madeira'},{anos:6,nome:'Perfume',img:'perfume'},
+  {anos:7,nome:'Lã',img:'la'},{anos:8,nome:'Barro',img:'barro'},
+  {anos:9,nome:'Vime',img:'vime'},{anos:10,nome:'Estanho',img:'estanho'},
+  {anos:11,nome:'Aço',img:'aco'},{anos:12,nome:'Ônix',img:'onix'},
+  {anos:13,nome:'Linho',img:'linho'},{anos:14,nome:'Marfim',img:'marfim'},
+  {anos:15,nome:'Cristal',img:'cristal'},{anos:16,nome:'Safira',img:'safira'},
+  {anos:17,nome:'Rosas',img:'rosas'},{anos:18,nome:'Turquesa',img:'turquesa'},
+  {anos:19,nome:'Água Marinha',img:'agua-marinha'},{anos:20,nome:'Porcelana',img:'porcelana'},
+  {anos:25,nome:'Prata',img:'prata'},{anos:30,nome:'Pérola',img:'perola'},
+  {anos:35,nome:'Coral',img:'coral'},{anos:40,nome:'Esmeralda',img:'esmeralda'},
+  {anos:45,nome:'Rubi',img:'rubi'},{anos:50,nome:'Ouro',img:'ouro'},
+  {anos:55,nome:'Ametista',img:'ametista'},{anos:60,nome:'Diamante',img:'diamante'},
+  {anos:65,nome:'Platina',img:'platina'},{anos:70,nome:'Vinho',img:'vinho'},
+  {anos:75,nome:'Brilhante',img:'brilhante'},{anos:80,nome:'Carvalho',img:'carvalho'},
+  {anos:85,nome:'Girassol',img:'girassol'},{anos:90,nome:'Álamo',img:'alamo'},
+  {anos:95,nome:'Sândalo',img:'sandalo'},{anos:100,nome:'Jequitibá',img:'jequitiba'}
+];
+
+function addYears(date,y){const d=new Date(date);d.setFullYear(d.getFullYear()+y);return d}
+
+function buildBodas(){
+  const list=document.getElementById('bodas-list');
+  list.innerHTML='';
+  const now=new Date();let foundNext=false;
+  BODAS.forEach(boda=>{
+    const bodaDate=addYears(START,boda.anos);
+    const isCompleto=bodaDate<=now;
+    const isCurrent=!isCompleto&&!foundNext;
+    if(isCurrent)foundNext=true;
+    const diffDays=Math.round(Math.abs(bodaDate-now)/86400000);
+    let statusHtml,tickIcon;
+    if(isCompleto){statusHtml=`<span class="boda-status done-text">✓ Completo · há ${diffDays.toLocaleString('pt-BR')} dias</span>`;tickIcon='✓'}
+    else if(isCurrent){statusHtml=`<span class="boda-status current-text">🌹 faltam <strong>${diffDays.toLocaleString('pt-BR')} dias</strong></span>`;tickIcon='✦'}
+    else{statusHtml=`<span class="boda-status future-text">faltam ${diffDays.toLocaleString('pt-BR')} dias</span>`;tickIcon='○'}
+    const item=document.createElement('div');
+    item.className='boda-item'+(isCompleto?' done':isCurrent?' current':'');
+    item.innerHTML=`<div class="boda-img-wrap"><img src="Fotos/contador/bodas/${boda.img}.svg" alt="${boda.nome}" loading="lazy"/></div><div class="boda-content"><div class="boda-header"><span class="boda-years">${boda.anos} ${boda.anos===1?'Ano':'Anos'}</span><span class="boda-name">${boda.nome}</span></div>${statusHtml}</div><div class="boda-tick">${tickIcon}</div>`;
+    list.appendChild(item)
+  });
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('revealed')})},{threshold:.08});
+  list.querySelectorAll('.boda-item').forEach(el=>obs.observe(el))
+}
+
+// ── Flip animation ─────────────────────────
+const prev={};
+function flip(el,val){
+  const v=String(val);
+  if(prev[el.id]===v)return;
+  prev[el.id]=v;el.textContent=v;
+  el.classList.remove('flip');void el.offsetWidth;el.classList.add('flip')
+}
+
+// ── Tick 1×/segundo ────────────────────────
+const elAnos=document.getElementById('cnt-anos'),elMeses=document.getElementById('cnt-meses'),elDias=document.getElementById('cnt-dias'),elHoras=document.getElementById('cnt-horas'),elMin=document.getElementById('cnt-minutos'),elSegs=document.getElementById('cnt-segundos');
+let statsBuilt=false;
+
+function tick(){
+  const{y,mo,d,h,mi,s}=calcDiff();
+  flip(elAnos,y);flip(elMeses,pad(mo));flip(elDias,pad(d));flip(elHoras,pad(h));flip(elMin,pad(mi));flip(elSegs,pad(s));
+  const{totalDays,totalHours,totalMinutes,totalSeconds}=calcTotals();
+  document.getElementById('tot-horas').textContent=totalHours.toLocaleString('pt-BR');
+  document.getElementById('tot-minutos').textContent=totalMinutes.toLocaleString('pt-BR');
+  document.getElementById('tot-segundos').textContent=totalSeconds.toLocaleString('pt-BR');
+  const bat=totalSeconds*140;
+  document.getElementById('tot-bat').textContent=bat.toLocaleString('pt-BR');
+  document.getElementById('tot-horas-ext').textContent=numExt(totalHours);
+  document.getElementById('tot-min-ext').textContent=numExt(totalMinutes);
+  document.getElementById('tot-seg-ext').textContent=numExt(totalSeconds);
+  const batM=Math.floor(bat/1000000);
+  document.getElementById('tot-bat-ext').textContent=batM>0?numExt(batM)+' de batidas':'';
+  if(!statsBuilt){
+    statsBuilt=true;
+    const{luasCheias,natais,namorados,fds}=calcStats(totalDays);
+    document.getElementById('stat-luas').textContent=luasCheias;
+    document.getElementById('stat-natais').textContent=natais;
+    document.getElementById('stat-namorados').textContent=namorados;
+    document.getElementById('stat-fds').textContent=fds.toLocaleString('pt-BR')
+  }
+}
+tick();setInterval(tick,1000);
+
+// ── % animação ─────────────────────────────
+(function(){
+  const{totalDays}=calcTotals();
+  const target=getPct(totalDays);
+  const elNum=document.getElementById('pct-num'),bar=document.getElementById('pct-bar'),note=document.getElementById('pct-note');
+  let st=null;
+  function step(ts){
+    if(!st)st=ts;
+    const prog=Math.min((ts-st)/3000,1);
+    const ease=1-Math.pow(1-prog,3);
+    elNum.textContent=Math.round(100-ease*(100-target));
+    if(prog<1){requestAnimationFrame(step)}
+    else{
+      elNum.textContent=target;
+      bar.style.width=target+'%';
+      note.textContent=target+'% dos casais têm mais tempo juntos';
+      setInterval(()=>{const{totalDays:td}=calcTotals();const p=getPct(td);elNum.textContent=p;bar.style.width=p+'%';note.textContent=p+'% dos casais têm mais tempo juntos'},60000)
+    }
+  }
+  setTimeout(()=>requestAnimationFrame(step),600)
+})();
+
+buildBodas();
+</script>
+</body>
+</html>
