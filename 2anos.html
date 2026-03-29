@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>dois anos ♡</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 1;
+      pointer-events: none;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    body {
+      background: #080106;
+      color: #ede0e5;
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse 70% 50% at 20% 10%, rgba(80,8,28,0.55) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 45% at 85% 90%, rgba(55,5,20,0.5) 0%, transparent 60%);
+    }
+
+    .letter {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 7vh 2rem 12vh;
+    }
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(232,135,154,0.35);
+  text-decoration: none;
+  margin-bottom: 3rem;
+  transition: color 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards 0.1s;
+}
+.btn-back:hover { color: rgba(232,135,154,0.7); }
+
+    /* ── CABEÇALHO ─────────────────────────────── */
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 5rem;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards 0.2s;
+    }
+    .letter-place {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(232,135,154,0.35);
+      line-height: 1.8;
+    }
+    .letter-date {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: rgba(245,198,208,0.4);
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    /* ── SAUDAÇÃO ──────────────────────────────── */
+    .letter-salutation {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      line-height: 1.15;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards 0.5s;
+    }
+    .letter-salutation span {
+      background: linear-gradient(135deg, #fce7f3 0%, #e8879a 55%, #c0395a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── PARÁGRAFOS ────────────────────────────── */
+    .para {
+      font-size: clamp(1.15rem, 2.4vw, 1.35rem);
+      line-height: 2.05;
+      color: rgba(237,224,229,0.72);
+      font-style: italic;
+      font-weight: 300;
+      margin-bottom: 2.2rem;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .para.visible { opacity: 1; transform: translateY(0); }
+    .para em     { color: rgba(232,135,154,0.82); font-style: normal; }
+    .para strong { color: rgba(245,198,208,0.85); font-weight: 400; }
+
+    /* ── FOTOS ─────────────────────────────────── */
+    .photo-block {
+      margin: 3.5rem -1.5rem;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .photo-block.visible { opacity: 1; transform: translateY(0); }
+
+    .photo-single { display: flex; justify-content: center; }
+    .photo-single img {
+      width: min(480px, 90vw);
+      border-radius: 3px;
+      display: block;
+      box-shadow: 0 2px 0 rgba(245,198,208,0.06), 0 20px 60px rgba(0,0,0,0.65), 0 4px 20px rgba(192,57,90,0.1);
+      transform: rotate(-1.2deg);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+    .photo-single:hover img {
+      transform: rotate(0deg) scale(1.01);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.7), 0 4px 24px rgba(192,57,90,0.18);
+    }
+
+    .photo-duo { display: flex; gap: 1rem; justify-content: center; align-items: flex-start; }
+    .photo-duo img {
+      width: calc(50% - 0.5rem); max-width: 300px;
+      border-radius: 3px; display: block;
+      box-shadow: 0 2px 0 rgba(245,198,208,0.06), 0 18px 50px rgba(0,0,0,0.6), 0 4px 18px rgba(192,57,90,0.08);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+    .photo-duo img:first-child { transform: rotate(-2deg); }
+    .photo-duo img:last-child  { transform: rotate(1.5deg) translateY(20px); }
+    .photo-duo img:hover {
+      transform: rotate(0deg) translateY(0) scale(1.02) !important;
+      z-index: 2;
+      box-shadow: 0 24px 65px rgba(0,0,0,0.7), 0 4px 22px rgba(192,57,90,0.15);
+    }
+
+    .photo-trio { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 0.8rem; align-items: center; }
+    .photo-trio img {
+      width: 100%; border-radius: 3px; display: block;
+      box-shadow: 0 16px 45px rgba(0,0,0,0.55);
+      transition: transform 0.5s ease;
+    }
+    .photo-trio img:nth-child(1) { transform: rotate(-3deg); }
+    .photo-trio img:nth-child(2) { transform: rotate(0.5deg); }
+    .photo-trio img:nth-child(3) { transform: rotate(2.5deg); }
+    .photo-trio img:hover { transform: rotate(0deg) scale(1.04) !important; z-index: 2; position: relative; }
+
+    .photo-caption, .video-caption {
+      text-align: center;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: rgba(232,135,154,0.3);
+      font-style: italic;
+      margin-top: 1.1rem;
+    }
+
+    /* ── VÍDEO VERTICAL ────────────────────────── */
+    .video-block {
+      margin: 3.5rem -1rem;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .video-block.visible { opacity: 1; transform: translateY(0); }
+
+    .video-tilt {
+      display: flex;
+      justify-content: center;
+      padding: 24px 20px;    /* espaço para a sombra não ser clipada */
+    }
+
+    /* Frame: proporção 9:16, levemente inclinado */
+    .video-frame {
+      position: relative;
+      width: min(260px, 55vw);
+      aspect-ratio: 9 / 16;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow:
+        0 2px 0 rgba(245,198,208,0.07),
+        0 22px 65px rgba(0,0,0,0.72),
+        0 4px 22px rgba(192,57,90,0.12);
+      transform: rotate(var(--tilt, -2deg));
+      transition:
+        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.55s ease;
+    }
+
+    /* Hover desktop */
+    .video-frame:hover {
+      transform: rotate(0deg) scale(1.03) translateY(-6px);
+      box-shadow:
+        0 2px 0 rgba(245,198,208,0.1),
+        0 34px 85px rgba(0,0,0,0.78),
+        0 6px 32px rgba(192,57,90,0.22);
+    }
+    /* Tap mobile */
+    .video-frame.touched {
+      transform: rotate(0deg) scale(1.03) translateY(-6px);
+      box-shadow:
+        0 2px 0 rgba(245,198,208,0.1),
+        0 34px 85px rgba(0,0,0,0.78),
+        0 6px 32px rgba(192,57,90,0.22);
+    }
+
+    .video-frame video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;   /* sem interação */
+    }
+
+    /* Dois vídeos lado a lado */
+    .video-duo {
+      display: flex;
+      gap: 1.8rem;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .video-duo .video-frame {
+      width: min(195px, 37vw);
+    }
+    .video-duo .video-frame:first-child { --tilt: -3deg; }
+    .video-duo .video-frame:last-child  {
+      --tilt: 2.5deg;
+      margin-top: 36px;
+    }
+
+    /* ── COISAS QUE SÓ A GENTE SABE ───────────── */
+    .aside-secrets {
+      margin: 2.5rem 0 2.5rem 1.5rem;
+      padding: 1.8rem 2rem;
+      border-left: 1px solid rgba(201,149,92,0.25);
+      opacity: 0;
+      transform: translateX(-12px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .aside-secrets.visible { opacity: 1; transform: translateX(0); }
+
+    .aside-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(201,149,92,0.4);
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .aside-item {
+      display: flex; align-items: baseline; gap: 0.9rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(232,135,154,0.07);
+    }
+    .aside-item:last-child { border-bottom: none; }
+    .aside-sym { color: rgba(201,149,92,0.4); font-size: 0.75rem; flex-shrink: 0; }
+    .aside-text {
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      font-style: italic;
+      color: rgba(237,224,229,0.55);
+      line-height: 1.55;
+    }
+    .tag-edit {
+      display: inline-block;
+      background: rgba(192,57,90,0.09);
+      border: 1px dashed rgba(192,57,90,0.25);
+      border-radius: 4px;
+      padding: 0.08rem 0.5rem;
+      font-size: 0.62rem; font-style: normal;
+      letter-spacing: 0.07em;
+      color: rgba(232,135,154,0.38);
+      margin-left: 0.3rem;
+    }
+
+    /* ── SEPARADOR ─────────────────────────────── */
+    .letter-sep {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 3rem 0;
+      opacity: 0; transition: opacity 0.9s ease;
+    }
+    .letter-sep.visible { opacity: 1; }
+    .sep-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(232,135,154,0.15), transparent); }
+    .sep-sym { color: rgba(201,149,92,0.35); font-size: 0.85rem; }
+
+    /* ── ASSINATURA ────────────────────────────── */
+    .letter-closing {
+      margin-top: 4rem;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .letter-closing.visible { opacity: 1; transform: translateY(0); }
+    .closing-phrase {
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+      font-style: italic;
+      color: rgba(237,224,229,0.55);
+      line-height: 1.9; margin-bottom: 2.5rem;
+    }
+    .signature {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      background: linear-gradient(135deg, #fce7f3, #e8879a 50%, rgba(201,149,92,0.8) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .signature-date {
+      display: block; margin-top: 0.5rem;
+      font-size: 0.7rem; letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(232,135,154,0.28);
+    }
+
+    /* ── RODAPÉ ────────────────────────────────── */
+    .letter-footer {
+      margin-top: 8rem; padding-top: 2rem;
+      border-top: 1px solid rgba(232,135,154,0.08);
+      text-align: center;
+    }
+    .footer-rose {
+      font-size: 1.2rem; display: inline-block;
+      animation: sway 5s ease-in-out infinite; opacity: 0.4;
+    }
+    .footer-nav {
+      margin-top: 1.2rem;
+      display: flex; align-items: center; justify-content: center; gap: 1rem;
+    }
+    .footer-nav a {
+      font-size: 0.65rem; letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(232,135,154,0.28); text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-nav a:hover { color: rgba(232,135,154,0.6); }
+    .footer-nav span { color: rgba(232,135,154,0.15); font-size: 0.5rem; }
+
+    /* ── ANIMS ─────────────────────────────────── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes sway {
+      0%,100% { transform: rotate(-6deg); }
+      50%      { transform: rotate( 6deg); }
+    }
+
+    /* ── RESPONSIVE ────────────────────────────── */
+    @media (max-width: 520px) {
+      .letter { padding: 5vh 1.4rem 10vh; }
+      .letter-header { flex-direction: column; gap: 0.4rem; }
+      .letter-date { text-align: left; }
+      .photo-duo { flex-direction: column; align-items: center; }
+      .photo-duo img { width: min(300px, 85vw); max-width: none; }
+      .photo-trio { grid-template-columns: 1fr 1fr; }
+      .photo-trio img:nth-child(2) { grid-column: 1 / -1; }
+      .photo-block, .video-block { margin: 3rem -0.4rem; }
+      .video-duo { gap: 1rem; }
+      .video-duo .video-frame { width: min(150px, 34vw); }
+      .aside-secrets { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH CHECK — comentado para dev, descomentar antes de publicar
+<script>
+if (sessionStorage.getItem('autenticado') !== 'true') {
+  window.location.href = 'index.html';
+}
+</script>
+-->
+
+<main class="letter">
+
+<a href="site.html" class="btn-back">← voltar</a>
+
+
+  <!-- ══ CABEÇALHO ══════════════════════════════ -->
+  <header class="letter-header">
+    <div class="letter-place">29 de março de 2026</div>
+    <div class="letter-date">dois anos ♡</div>
+  </header>
+
+  <!-- ══ SAUDAÇÃO ═══════════════════════════════ -->
+  <h1 class="letter-salutation"><span>Oii Meu Amor,</span></h1>
+
+  <!-- ✏️ EDITE OS PARÁGRAFOS ABAIXO ══════════════
+       Cada .para é um parágrafo da carta.
+       Adicione, remova ou reescreva à vontade.    -->
+
+  <p class="para">
+    Dois anos já? Parece que foi ontem que a gente se conheceu, naquele domingo de novembro, mas ao mesmo tempo sinto que eu já te conheço há uma vida inteira.
+  </p>
+
+  <p class="para">
+    Isso porque com você o tempo parece não passar, mas ao mesmo tempo passa voando, e isso não importa tanto assim sabendo que esse tempo foi aproveitado com você minha princesa!! ❤️.
+  </p>
+
+  <!-- ══ FOTOS 1 ════════════════════════════════ -->
+  <div class="photo-block">
+    <div class="photo-duo">
+      <img src="Fotos/2anos/001.webp" alt=""/><!-- ✏️ foto real -->
+      <img src="Fotos/2anos/002.webp" alt=""/><!-- ✏️ foto real -->
+    </div>
+  </div>
+
+  <p class="para">
+    Gosto sempre de lembrar do nosso pré-namoro (Não sei se é esse o nome KKKKK), de como a gente puxava assunto com facilidade e falava de tudo, de como a gente foi evoluindo as nossas mensagens normais pra mensagens fofas, até as cantadas vergonhosas pra gente agora KKKK, mas que na época era o nossa expectativa virando realidade, até que a gente tornou isso mais real ainda, que foi quando nossa contagem oficial começou 💕💕.
+  </p>
+
+  <div class="para" id="counter-block">
+  <span id="counter-text">carregando…</span>
+</div>
+
+<script>
+(function() {
+  var start = new Date('2024-03-29T00:00:00');
+  function tick() {
+    var diff = new Date() - start;
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var pad = function(n) { return String(n).padStart(2, '0'); };
+    document.getElementById('counter-text').innerHTML =
+      '<em>' + d + '</em> dias, <em>' + pad(h) + '</em> horas, <em>' + pad(m) + '</em> minutos e <em>' + pad(s) + '</em> segundos juntos.';
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+
+  <p class="para">
+    Desde esse dia, o nosso amor amadureceu, mas o meu encanto por você é o mesmo desde o primeiro dia, e isso nunca vai passar. Minha paixão e admiração por você só tem aumentado com o passar dessa contagem.
+  </p>
+
+  <!-- ══ VÍDEO 1 — único, inclinado ════════════ -->
+  <div class="video-block">
+    <div class="video-tilt">
+      <div class="video-frame" style="--tilt: -2.5deg;">
+        <video autoplay loop muted playsinline>
+          <source src="Fotos/2anos/003.mp4" type="video/mp4"/>
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <p class="para">
+    E se Deus quiser, que um dia nosso contador possa começar do zero outra vez, quando finalmente estivermos frente a frente em um altar dizendo sim um para o outro, e aí sim, que esse contador nunca pare, porque eu quero passar até o último dia da minha vida com você do meu lado meu amor ❤️❤️❤️!
+  </p>
+
+  <div class="letter-sep">
+    <div class="sep-line"></div><span class="sep-sym">✦</span><div class="sep-line"></div>
+  </div>
+
+  <!-- ══ FOTOS 2 ════════════════════════════════ -->
+  <div class="photo-block">
+    <div class="photo-trio">
+      <img src="Fotos/2anos/3.webp" alt=""/><!-- ✏️ -->
+      <img src="Fotos/2anos/5.webp" alt=""/><!-- ✏️ -->
+      <img src="Fotos/2anos/6.webp" alt=""/><!-- ✏️ -->
+    </div>
+  </div>
+
+  <p class="para">
+Cada uma desses nossos momentos foram maravilhosos, só tenho a agradecer por tudo o que vivemos meu amor, por ser quem nós somos, por você estar do meu lado, por me apoiar, por não desistir de mim.</p>
+
+  <p class="para">
+Você mudou minha vida totalmente, pra muito melhor do que eu era, até porque antes eu nem sabia do quão importante você seria pra mim, e vai continuar sendo!💕
+  </p>
+
+  <!-- ══ VÍDEOS 2 — dupla lado a lado ══════════ -->
+  <div class="video-block">
+    <div class="video-tilt">
+      <div class="video-duo">
+        <div class="video-frame">
+          <video autoplay loop muted playsinline>
+            <source src="Fotos/2anos/001.mp4" type="video/mp4"/>
+          </video>
+        </div>
+        <div class="video-frame">
+          <video autoplay loop muted playsinline>
+            <source src="Fotos/2anos/002.mp4" type="video/mp4"/>
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<p class="para">
+Meu coração é totalmente seu Larissa, e as vezes ele é pequeno demais pra todo amor que eu sinto por você, nem se eu quisesse eu poderia por tudo o que eu sinto por você nesse texto amor, você é simplesmente a melhor pessoa de todas, eu te amo demais Larissa, mais do que as palavras podem expressar, EU TE AMOOO❤️❤️❤️❤️❤️!!!
+  </p>
+
+  <!-- ══ FOTO FINAL ═════════════════════════════ -->
+  <div class="photo-block">
+    <div class="photo-single">
+      <img src="Fotos/2anos/4.webp" alt=""/><!-- ✏️ a melhor foto dos 2 anos -->
+    </div>
+  </div>
+
+ 
+  <!-- ══ ASSINATURA ════════════════════════════ -->
+  <div class="letter-closing">
+    <p class="closing-phrase">
+      com todo o amor que coube em mais de dois anos —<br/>
+      e todo o que ainda está por vir.
+    </p>
+    <div class="signature">
+      Miguel ♡
+      <span class="signature-date">29 · 03 · 2026</span>
+    </div>
+  </div>
+
+ 
+</main>
+
+<script>
+/*
+── AUTH CHECK — descomentar antes de publicar ──
+if (sessionStorage.getItem('autenticado') !== 'true') {
+  window.location.href = 'index.html';
+}
+*/
+
+/* ── SCROLL REVEAL ──────────────────────────── */
+var io = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (!entry.isIntersecting) return;
+    var el = entry.target;
+    el.classList.add('visible');
+    if (el.classList.contains('aside-secrets')) {
+      el.querySelectorAll('.aside-item').forEach(function(item, i) {
+        item.style.opacity    = '0';
+        item.style.transform  = 'translateX(-10px)';
+        item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        setTimeout(function() {
+          item.style.opacity   = '1';
+          item.style.transform = 'translateX(0)';
+        }, i * 90);
+      });
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll(
+  '.para, .photo-block, .video-block, .aside-secrets, .letter-sep, .letter-closing'
+).forEach(function(el) { io.observe(el); });
+
+/* ── TOUCH nos vídeos (mobile hover) ───────── */
+document.querySelectorAll('.video-frame').forEach(function(frame) {
+  frame.addEventListener('touchstart', function() {
+    frame.classList.add('touched');
+  }, { passive: true });
+  frame.addEventListener('touchend', function() {
+    setTimeout(function() { frame.classList.remove('touched'); }, 700);
+  }, { passive: true });
+});
+</script>
+
+</body>
+</html>
